@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Visualizador de Estoque de Filtros</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+    --primary-color: #05433a;
+    --secondary-color: #8d9495;
+    --background-color: #f2f9f9;
+    --accent-color: #709c94;
+    --light-accent: #7ca49c;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--background-color);
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+header p {
+    margin-top: 10px;
+    opacity: 0.8;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+h1 i, h2 i {
+    margin-right: 10px;
+}
+
+h2 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 10px;
+}
+
+.inventory-section {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+#search-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+}
+
+#search-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+#search-button:hover {
+    background-color: var(--primary-color);
+}
+
+.filter-options {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.filter-options label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.filter-options select {
+    padding: 8px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 4px;
+    background-color: white;
+}
+
+.inventory-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.stat-box {
+    background-color: var(--light-accent);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    flex: 1;
+    min-width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-box i {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.stat-box span {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.inventory-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.inventory-item {
+    background-color: var(--background-color);
+    border-left: 4px solid var(--accent-color);
+    padding: 15px;
+    border-radius: 4px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.inventory-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.item-code {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 3px 6px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.item-name {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.item-location {
+    color: var(--secondary-color);
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.item-description {
+    color: #555;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.item-quantity {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.low-stock {
+    border-left: 4px solid #ff6b6b;
+}
+
+.low-stock .item-quantity {
+    color: #ff6b6b;
+}
+
+.low-stock-indicator {
+    background-color: #ff6b6b;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.details-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.details-button:hover {
+    background-color: var(--primary-color);
+}
+
+#export-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 20px auto;
+}
+
+#export-button:hover {
+    background-color: #032a25;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--secondary-color);
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    header {
+        padding: 15px;
+    }
+
+    .inventory-stats {
+        flex-direction: column;
+    }
+
+    .stat-box {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .search-bar {
+        flex-direction: column;
+    }
+
+    #search-input {
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    #search-button {
+        border-radius: 4px;
+        width: 100%;
+    }
+
+    .filter-options {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-options label {
+        margin-bottom: 5px;
+    }
+
+    .inventory-list {
+        grid-template-columns: 1fr;
+    }
+
+    .inventory-item {
+        margin: 10px 0;
+    }
+
+    .details-button {
+        padding: 12px;
+    }
+
+    #export-button {
+        width: 100%;
+    }
+}
+    </style>
+</head>
+<body>
+    <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Visualizador de Estoque de Filtros</title>
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-filter"></i> Visualizador de Estoque de Filtros</h1>
+            <p>Sistema de Gerenciamento de Estoque</p>
+        </header>
+        
+        <div class="inventory-section" id="inventory-display">
+            <h2><i class="fas fa-clipboard-list"></i> Listagem de Estoque de Filtros - Seção A</h2>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Buscar por código ou nome do item...">
+                <button id="search-button"><i class="fas fa-search"></i> Buscar</button>
+            </div>
+            
+            <div class="filter-options">
+                <label for="location-filter">Filtrar por localização:</label>
+                <select id="location-filter">
+                    <option value="">Todas as Localizações</option>
+                    <option value="A1-A5">A1-A5</option>
+                    <option value="A6-A10">A6-A10</option>
+                    <option value="A11-A15">A11-A15</option>
+                    <option value="A16-A20">A16-A20</option>
+                    <option value="A21-A25">A21-A25</option>
+                </select>
+            </div>
+            
+            <div class="inventory-stats">
+                <div class="stat-box">
+                    <i class="fas fa-cubes"></i>
+                    <span id="total-items">0</span>
+                    <p>Total de Itens</p>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-warehouse"></i>
+                    <span id="total-quantity">0</span>
+                    <p>Quantidade Total</p>
+                </div>
+                <div class="stat-box">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="total-locations">0</span>
+                    <p>Localizações</p>
+                </div>
+            </div>
+            
+            <div class="inventory-list" id="inventory-list">
+                <!-- Items will be loaded dynamically -->
+            </div>
+            
+            <div class="export-controls">
+                <button id="export-button" class="action-button">
+                    <i class="fas fa-file-download"></i> Exportar para CSV
+                </button>
+                <button id="print-button" class="action-button">
+                    <i class="fas fa-print"></i> Imprimir Lista
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal for item details -->
+        <div id="item-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3 id="modal-item-name"></h3>
+                <div class="modal-details">
+                    <!-- Details will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2023 Sistema de Visualização de Estoque de Filtros</p>
+        </footer>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
+    <script>
+        // Inventory data
+const inventoryData = [
+    { id: 1500008, name: "FILTRO DE COMBUSTIVEL HAMM 3411P", location: "A1", description: "Filtro para equipamento Hamm 3411P", quantity: 2 },
+    { id: 1500018, name: "FILTRO DE AR CONDICIONADO SECUNDARIO", location: "A1", description: "Filtro secundário para ar condicionado", quantity: 2 },
+    { id: 1500041, name: "FILTRO DE ÓLEO LUBRIFICANTE DO MOTOR", location: "A2", description: "Filtro para lubrificação do motor", quantity: 1 },
+    { id: 1500065, name: "FILTRO DE COMBUSTÍVEL CONSTELLATION 31320", location: "A2", description: "Filtro para Constellation 31320", quantity: 1 },
+    { id: 1500074, name: "FILTRO DO TANQUE HIDRAULICO HYVA", location: "A3", description: "Filtro para tanque hidráulico Hyva", quantity: 6 },
+    { id: 1500096, name: "FILTRO SECUNDÁRIO DE DIESEL", location: "A3", description: "Filtro secundário para diesel", quantity: 2 },
+    { id: 1500100, name: "FILTRO PRIMARIO DE AR DO MOTOR", location: "A4", description: "Filtro primário para ar do motor", quantity: 1 },
+    { id: 1500101, name: "FILTRO SECUNDARIO DE AR DO MOTOR", location: "A4", description: "Filtro secundário para ar do motor", quantity: 1 },
+    { id: 1500102, name: "FILTRO DE ÓLEO LUBRIFICANTE DO MOTOR", location: "A5", description: "Filtro para lubrificação do motor", quantity: 9 },
+    { id: 1500103, name: "FILTRO SECUNDÁRIO DE DIESEL AXOR 4144/43", location: "A5", description: "Filtro para Axor 4144/43", quantity: 8 }
+];
+
+// Load inventory items
+function loadInventoryItems(items) {
+    const inventoryList = document.getElementById("inventory-list");
+    inventoryList.innerHTML = "";
+    
+    items.forEach(item => {
+        const itemElement = document.createElement("div");
+        itemElement.className = "inventory-item";
+        
+        if (item.quantity <= 3) {
+            itemElement.classList.add("low-stock");
+        }
+        
+        let quantityHtml = `Quantidade: ${item.quantity}`;
+        if (item.quantity <= 3) {
+            quantityHtml += ` <span class="low-stock-indicator">Estoque Baixo</span>`;
+        }
+        
+        itemElement.innerHTML = `
+            <div class="item-code">Código: ${item.id}</div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-location">Localização: ${item.location}</div>
+            <div class="item-description">${item.description}</div>
+            <div class="item-quantity">${quantityHtml}</div>
+            <button class="details-button" onclick="showItemDetails(${item.id})">
+                <i class="fas fa-info-circle"></i> Detalhes
+            </button>
+        `;
+        
+        inventoryList.appendChild(itemElement);
+    });
+}
+
+// Update statistics
+function updateStats() {
+    document.getElementById("total-items").textContent = inventoryData.length;
+    
+    const totalQuantity = inventoryData.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById("total-quantity").textContent = totalQuantity;
+    
+    const uniqueLocations = new Set(inventoryData.map(item => item.location)).size;
+    document.getElementById("total-locations").textContent = uniqueLocations;
+}
+
+// Setup search functionality
+function setupSearch() {
+    const searchInput = document.getElementById("search-input");
+    const searchButton = document.getElementById("search-button");
+    
+    function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase();
+        
+        if (searchTerm.trim() === "") {
+            loadInventoryItems(inventoryData);
+            return;
+        }
+        
+        const filteredItems = inventoryData.filter(item => 
+            item.name.toLowerCase().includes(searchTerm) || 
+            item.location.toLowerCase().includes(searchTerm) ||
+            item.description.toLowerCase().includes(searchTerm) ||
+            item.id.toString().includes(searchTerm)
+        );
+        
+        loadInventoryItems(filteredItems);
+    }
+    
+    searchButton.addEventListener("click", performSearch);
+    searchInput.addEventListener("keyup", (event) => {
+        if (event.key === "Enter") {
+            performSearch();
+        }
+    });
+}
+
+// Setup location filters
+function setupFilters() {
+    const locationFilter = document.getElementById("location-filter");
+    
+    locationFilter.addEventListener("change", () => {
+        const filterValue = locationFilter.value;
+        let filteredItems = [...inventoryData];
+        
+        if (filterValue) {
+            const [start, end] = filterValue.split("-");
+            filteredItems = inventoryData.filter(item => {
+                const locationNum = parseInt(item.location.substring(1));
+                const startNum = parseInt(start.substring(1));
+                const endNum = parseInt(end.substring(1));
+                return locationNum >= startNum && locationNum <= endNum;
+            });
+        }
+        
+        loadInventoryItems(filteredItems);
+    });
+}
+
+// Export to CSV
+function exportToCSV() {
+    let csvContent = "data:text/csv;charset=utf-8,";
+    
+    csvContent += "Código,Nome,Localização,Descrição,Quantidade\n";
+    
+    inventoryData.forEach(item => {
+        const row = [
+            item.id,
+            item.name,
+            item.location,
+            item.description,
+            item.quantity
+        ].join(",");
+        csvContent += row + "\n";
+    });
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "estoque_filtros.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Show item details
+function showItemDetails(id) {
+    const item = inventoryData.find(item => item.id === id);
+    
+    if (item) {
+        alert(`
+            Código: ${item.id}
+            Nome: ${item.name}
+            Localização: ${item.location}
+            Descrição: ${item.description}
+            Quantidade: ${item.quantity}
+        `);
+    }
+}
+
+// Initialize everything when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+    loadInventoryItems(inventoryData);
+    updateStats();
+    setupSearch();
+    setupFilters();
+    
+    document.getElementById("export-button").addEventListener("click", exportToCSV);
+});
+    </script>
+</body>
+</html>
