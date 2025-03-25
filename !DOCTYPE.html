@@ -4,360 +4,1089 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Visualizador de Estoque de Filtros</title>
+    <title>Visualizador de Estoque - CIMCOP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-    --primary-color: #05433a;
-    --secondary-color: #8d9495;
-    --background-color: #f2f9f9;
-    --accent-color: #709c94;
-    --light-accent: #7ca49c;
-}
+            --primary-color: #05433a;
+            --secondary-color: #8d9495;
+            --background-color: #f2f9f9;
+            --accent-color: #709c94;
+            --light-accent: #7ca49c;
+            --expansion-color: #e1f5fe;
+            --all-stock-color: #5c6bc0;
+            --danger-color: #d32f2f;
+        }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-body {
-    background-color: var(--background-color);
-    color: #333;
-    line-height: 1.6;
-}
+        body {
+            background-color: var(--background-color);
+            color: #333;
+            line-height: 1.6;
+        }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 20px;
-    text-align: center;
-    border-radius: 8px 8px 0 0;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-header p {
-    margin-top: 10px;
-    opacity: 0.8;
-}
+        header p {
+            margin-top: 10px;
+            opacity: 0.8;
+        }
 
-h1 {
-    font-size: 2rem;
-}
+        h1 {
+            font-size: 2rem;
+        }
 
-h1 i, h2 i {
-    margin-right: 10px;
-}
+        h1 i, h2 i, h3 i {
+            margin-right: 10px;
+        }
 
-h2 {
-    color: var(--primary-color);
-    margin-bottom: 15px;
-    border-bottom: 2px solid var(--accent-color);
-    padding-bottom: 10px;
-}
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
 
-.inventory-section {
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+        h3 {
+            color: white;
+            margin-bottom: 10px;
+        }
 
-.search-bar {
-    display: flex;
-    margin-bottom: 20px;
-}
+        .inventory-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-#search-input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid var(--secondary-color);
-    border-radius: 4px 0 0 4px;
-    font-size: 16px;
-}
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+        }
 
-#search-button {
-    background-color: var(--accent-color);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-}
+        #search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--secondary-color);
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
 
-#search-button:hover {
-    background-color: var(--primary-color);
-}
+        #search-button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
 
-.filter-options {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-}
+        #search-button:hover {
+            background-color: var(--primary-color);
+        }
 
-.filter-options label {
-    margin-right: 10px;
-    font-weight: bold;
-    color: var(--primary-color);
-}
+        .inventory-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
 
-.filter-options select {
-    padding: 8px;
-    border: 1px solid var(--secondary-color);
-    border-radius: 4px;
-    background-color: white;
-}
+        .stat-box {
+            background-color: var(--light-accent);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-.inventory-stats {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 15px;
-}
+        .stat-box i {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
 
-.stat-box {
-    background-color: var(--light-accent);
-    color: white;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    flex: 1;
-    min-width: 200px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+        .stat-box span {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
 
-.stat-box i {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
+        /* Estilo dos cards de divisão */
+        .division-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
 
-.stat-box span {
-    display: block;
-    font-size: 24px;
-    font-weight: bold;
-    margin: 5px 0;
-}
+        .division-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--accent-color);
+            opacity: 1;
+            transform: scale(1);
+            height: auto;
+            padding: initial;
+            margin: initial;
+            border: initial;
+        }
 
-.inventory-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
-}
+        .division-card.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            height: 0;
+            padding: 0;
+            margin: 0;
+            border: none;
+            overflow: hidden;
+        }
 
-.inventory-item {
-    background-color: var(--background-color);
-    border-left: 4px solid var(--accent-color);
-    padding: 15px;
-    border-radius: 4px;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
+        .division-card.all-stock {
+            border-left: 4px solid var(--all-stock-color);
+        }
 
-.inventory-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-}
+        .division-card.all-stock .division-header {
+            background-color: var(--all-stock-color);
+        }
 
-.item-code {
-    font-weight: bold;
-    color: var(--primary-color);
-    margin-bottom: 5px;
-    font-size: 14px;
-    background-color: rgba(255, 255, 255, 0.5);
-    padding: 3px 6px;
-    border-radius: 3px;
-    display: inline-block;
-}
+        .division-card.expanded {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            z-index: 1001;
+            overflow-y: auto;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
 
-.item-name {
-    font-weight: bold;
-    color: var(--primary-color);
-    margin-bottom: 5px;
-    font-size: 16px;
-}
+        .division-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.item-location {
-    color: var(--secondary-color);
-    font-weight: bold;
-    margin-bottom: 5px;
-}
+        .division-header h3 {
+            color: white;
+            margin: 0;
+        }
 
-.item-description {
-    color: #555;
-    margin-bottom: 10px;
-    font-size: 14px;
-}
+        .division-content {
+            padding: 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
 
-.item-quantity {
-    font-weight: bold;
-    color: var(--primary-color);
-    margin-bottom: 10px;
-}
+        .division-card.expanded .division-content {
+            max-height: none;
+            padding: 15px;
+            overflow-y: auto;
+        }
 
-.low-stock {
-    border-left: 4px solid #ff6b6b;
-}
+        .division-items {
+            margin-top: 10px;
+        }
 
-.low-stock .item-quantity {
-    color: #ff6b6b;
-}
+        .division-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+            position: relative;
+            padding-right: 60px; /* Espaço para o indicador de localização */
+        }
 
-.low-stock-indicator {
-    background-color: #ff6b6b;
-    color: white;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 12px;
-    margin-left: 5px;
-}
+        .division-item:hover {
+            background-color: #f9f9f9;
+        }
 
-.details-button {
-    background-color: var(--accent-color);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    width: 100%;
-    transition: background-color 0.3s;
-}
+        .division-item:last-child {
+            border-bottom: none;
+        }
 
-.details-button:hover {
-    background-color: var(--primary-color);
-}
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
 
-#export-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-    display: block;
-    margin: 20px auto;
-}
+        .item-code {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 14px;
+        }
 
-#export-button:hover {
-    background-color: #032a25;
-}
+        .item-quantity {
+            position: absolute;
+            top: 10px;
+            right: 50px;
+            font-weight: bold;
+            color: var(--primary-color);
+            background-color: #e1f5fe;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            z-index: 1;
+        }
 
-footer {
-    text-align: center;
-    padding: 20px;
-    color: var(--secondary-color);
-    font-size: 14px;
-}
+        .item-location {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            z-index: 1;
+        }
 
-@media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
+        .item-category {
+            font-size: 0.9em;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
 
-    header {
-        padding: 15px;
-    }
+        .item-name {
+            font-weight: bold;
+            margin: 5px 0;
+        }
 
-    .inventory-stats {
-        flex-direction: column;
-    }
+        .item-details {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #555;
+        }
 
-    .stat-box {
-        width: 100%;
-        margin-bottom: 10px;
-    }
+        .item-equivalence, .item-application {
+            margin-top: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
 
-    .search-bar {
-        flex-direction: column;
-    }
+        .item-equivalence:before {
+            content: "⇄";
+            position: absolute;
+            left: 0;
+        }
 
-    #search-input {
-        border-radius: 4px;
-        margin-bottom: 10px;
-    }
+        .item-application:before {
+            content: "⚙";
+            position: absolute;
+            left: 0;
+        }
 
-    #search-button {
-        border-radius: 4px;
-        width: 100%;
-    }
+        .item-epi {
+            margin-top: 5px;
+            padding-left: 15px;
+            position: relative;
+            color: #d32f2f;
+            font-weight: bold;
+        }
 
-    .filter-options {
-        flex-direction: column;
-        align-items: stretch;
-    }
+        .item-epi:before {
+            content: "⚠";
+            position: absolute;
+            left: 0;
+        }
 
-    .filter-options label {
-        margin-bottom: 5px;
-    }
+        .details-button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 8px;
+            transition: background-color 0.3s;
+        }
 
-    .inventory-list {
-        grid-template-columns: 1fr;
-    }
+        .details-button:hover {
+            background-color: var(--primary-color);
+        }
 
-    .inventory-item {
-        margin: 10px 0;
-    }
+        .expand-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
 
-    .details-button {
-        padding: 12px;
-    }
+        .division-card.expanded .expand-button {
+            transform: rotate(180deg);
+        }
 
-    #export-button {
-        width: 100%;
-    }
-}
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .action-button, #export-button, #print-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .action-button.danger {
+            background-color: var(--danger-color);
+        }
+
+        .action-button:hover, #export-button:hover, #print-button:hover {
+            background-color: #032a25;
+        }
+
+        .action-button.danger:hover {
+            background-color: #b71c1c;
+        }
+
+        .export-controls {
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--secondary-color);
+            font-size: 14px;
+            border-top: 1px solid #eee;
+            margin-top: 30px;
+        }
+
+        footer p {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        footer p::before {
+            content: "";
+            display: block;
+            width: 50px;
+            height: 2px;
+            background: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 2001;
+        }
+        
+        .close-modal {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+
+        .transfer-form {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .form-row {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row label {
+            width: 150px;
+            font-weight: bold;
+        }
+
+        .admin-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .danger-zone {
+            border: 2px solid var(--danger-color);
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 5px;
+        }
+
+        .danger-zone h4 {
+            color: var(--danger-color);
+        }
+
+        .log-tabs {
+            display: flex;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .log-tab {
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .log-tab.active {
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: bold;
+        }
+
+        .log-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .log-content th, .log-content td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .log-content th {
+            background-color: var(--light-accent);
+            color: white;
+        }
+
+        .log-content tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Cores por localização (card "Todos") */
+        .division-card.all-stock .division-item[data-location^="A1"] {
+            border-left: 4px solid #3498db;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        .division-card.all-stock .division-item[data-location^="A2"] {
+            border-left: 4px solid #2ecc71;
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+        .division-card.all-stock .division-item[data-location^="A3"] {
+            border-left: 4px solid #e74c3c;
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+        .division-card.all-stock .division-item[data-location^="A4"] {
+            border-left: 4px solid #f39c12;
+            background-color: rgba(243, 156, 18, 0.1);
+        }
+        .division-card.all-stock .division-item[data-location^="A5"] {
+            border-left: 4px solid #9b59b6;
+            background-color: rgba(155, 89, 182, 0.1);
+        }
+        .division-card.all-stock .division-item[data-location^="A6"] {
+            border-left: 4px solid #1abc9c;
+            background-color: rgba(26, 188, 156, 0.1);
+        }
+        .division-card.all-stock .division-item[data-location^="A7"] {
+            border-left: 4px solid #d35400;
+            background-color: rgba(211, 84, 0, 0.1);
+        }
+        .division-card.all-stock .division-item[data-location^="A8"] {
+            border-left: 4px solid #34495e;
+            background-color: rgba(52, 73, 94, 0.1);
+        }
+        .division-card.all-stock .division-item[data-location^="A9"] {
+            border-left: 4px solid #16a085;
+            background-color: rgba(22, 160, 133, 0.1);
+        }
+        .division-card.all-stock .division-item[data-location^="A10"] {
+            border-left: 4px solid #8e44ad;
+            background-color: rgba(142, 68, 173, 0.1);
+        }
+        /* Continue o padrão para todas as localizações necessárias */
+
+        /* Estilo para os itens quando o card "Todos" está expandido */
+        .division-card.all-stock.expanded .division-item {
+            margin-bottom: 10px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .division-card.all-stock.expanded .division-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Melhorar a legenda */
+        .location-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            padding: 5px 10px;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        /* Estilos para remoção de itens */
+        .remove-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .remove-quantity input {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .admin-item-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .item-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        /* Estilos para autocomplete */
+        .autocomplete {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+        }
+
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+
+        .autocomplete-items div:hover {
+            background-color: #e9e9e9;
+        }
+
+        /* Estilos para seção de recebimento */
+        .receipt-form {
+            display: grid;
+            gap: 15px;
+        }
+
+        .receipt-form textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .receipt-success {
+            color: green;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Novo estilo para o menu administrativo */
+        .admin-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .admin-menu-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .admin-menu-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .admin-menu-item i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .admin-menu-item h4 {
+            margin: 5px 0;
+            color: var(--primary-color);
+        }
+
+        .admin-menu-item p {
+            font-size: 14px;
+            color: var(--secondary-color);
+        }
+
+        /* Mobile nav */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--primary-color);
+            display: none;
+            z-index: 1000;
+        }
+
+        /* New styles from dados.txt */
+        .highlight {
+            background-color: #ffeb3b;
+            font-weight: bold;
+            padding: 0 2px;
+        }
+        
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        
+        .pagination-controls button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .pagination-controls button:disabled {
+            background-color: var(--secondary-color);
+            cursor: not-allowed;
+        }
+        
+        .page-indicator {
+            padding: 0 15px;
+            font-weight: bold;
+        }
+        
+        .division-container.compact-view .division-card {
+            margin-bottom: 10px;
+        }
+        
+        .division-container.compact-view .division-item {
+            padding: 5px 60px 5px 10px;
+            font-size: 0.9em;
+        }
+        
+        .division-container.compact-view .item-details,
+        .division-container.compact-view .item-equivalence,
+        .division-container.compact-view .item-application,
+        .division-container.compact-view .item-epi {
+            display: none;
+        }
+        
+        .historico-section {
+            margin-top: 20px;
+        }
+        
+        .historico-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .historico-item {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .historico-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .historico-codigo {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+        
+        .historico-nome {
+            margin-right: 10px;
+        }
+        
+        .historico-local {
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+        }
+        
+        .confirm-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+        
+        .confirm-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .confirm-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Enhanced mobile styles */
+        .mobile-export-menu {
+            position: fixed;
+            bottom: 60px;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 10px 10px 0 0;
+            padding: 15px;
+            display: none;
+        }
+        
+        .mobile-export-menu.active {
+            display: block;
+        }
+        
+        .mobile-export-menu button {
+            margin: 5px 0;
+            width: 100%;
+        }
+        
+        /* Admin menu improvements */
+        .admin-section-content {
+            display: none;
+        }
+        
+        .admin-section-content.active {
+            display: block;
+        }
+        
+        .admin-menu-item.active {
+            background-color: var(--light-accent);
+            color: white;
+        }
+        
+        .admin-menu-item.active h4,
+        .admin-menu-item.active i,
+        .admin-menu-item.active p {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            header {
+                padding: 15px;
+            }
+
+            .inventory-stats {
+                flex-direction: column;
+            }
+
+            .stat-box {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            #search-input {
+                border-radius: 4px;
+                margin-bottom: 10px;
+            }
+
+            #search-button {
+                border-radius: 4px;
+                width: 100%;
+            }
+
+            .division-container {
+                grid-template-columns: 1fr;
+            }
+
+            .division-card.expanded {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+            }
+
+            .action-button, #export-button, #print-button {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+
+            .form-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-row label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .export-controls {
+                display: none;
+            }
+            
+            .mobile-nav {
+                display: block;
+            }
+
+            #visible-items {
+                height: 60vh;
+            }
+            
+            .item-card {
+                padding: 8px 5px;
+                font-size: 14px;
+            }
+            
+            #export-pdf {
+                padding: 12px;
+                font-size: 16px;
+            }
+
+            /* Ajustes para mobile */
+            .division-item {
+                padding-right: 50px;
+            }
+            .item-quantity {
+                right: 40px;
+            }
+
+            /* Ajustes para menu admin mobile */
+            .admin-menu {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-section {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+        }
     </style>
-</head>
-<body>
-    <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Visualizador de Estoque de Filtros</title>
-    <link rel="stylesheet" type="text/css" href="./style.css">
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-filter"></i> Visualizador de Estoque de Filtros</h1>
-            <p>Sistema de Gerenciamento de Estoque</p>
+            <h1><i class="fas fa-filter"></i> Visualizador de Estoque - CIMCOP</h1>
+            <p>Sistema de Gerenciamento de Estoque - Suprimentos</p>
         </header>
         
         <div class="inventory-section" id="inventory-display">
-            <h2><i class="fas fa-clipboard-list"></i> Listagem de Estoque de Filtros - Seção A</h2>
+            <h2><i class="fas fa-clipboard-list"></i> ESTOQUE - 030</h2>
             <div class="search-bar">
                 <input type="text" id="search-input" placeholder="Buscar por código ou nome do item...">
                 <button id="search-button"><i class="fas fa-search"></i> Buscar</button>
             </div>
             
-            <div class="filter-options">
-                <label for="location-filter">Filtrar por localização:</label>
-                <select id="location-filter">
-                    <option value="">Todas as Localizações</option>
-                    <option value="A1-A5">A1-A5</option>
-                    <option value="A6-A10">A6-A10</option>
-                    <option value="A11-A15">A11-A15</option>
-                    <option value="A16-A20">A16-A20</option>
-                    <option value="A21-A25">A21-A25</option>
-                </select>
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label for="category-filter">Filtrar por categoria:</label>
+                    <select id="category-filter">
+                        <option value="all">Todas as categorias</option>
+                        <!-- Categorias serão preenchidas por JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="location-filter">Filtrar por localização:</label>
+                    <select id="location-filter">
+                        <option value="all">Todas as localizações</option>
+                        <!-- Localizações serão preenchidas por JavaScript -->
+                    </select>
+                </div>
             </div>
             
             <div class="inventory-stats">
@@ -368,211 +1097,2117 @@ footer {
                 </div>
                 <div class="stat-box">
                     <i class="fas fa-warehouse"></i>
-                    <span id="total-quantity">0</span>
-                    <p>Quantidade Total</p>
-                </div>
-                <div class="stat-box">
-                    <i class="fas fa-map-marker-alt"></i>
                     <span id="total-locations">0</span>
                     <p>Localizações</p>
                 </div>
             </div>
             
-            <div class="inventory-list" id="inventory-list">
-                <!-- Items will be loaded dynamically -->
+            <div class="division-container" id="division-container">
+                <!-- Division cards will be loaded dynamically -->
             </div>
             
             <div class="export-controls">
-                <button id="export-button" class="action-button">
-                    <i class="fas fa-file-download"></i> Exportar para CSV
-                </button>
                 <button id="print-button" class="action-button">
                     <i class="fas fa-print"></i> Imprimir Lista
                 </button>
+                <button id="export-excel-button" class="action-button">
+                    <i class="fas fa-file-excel"></i> Exportar para Excel
+                </button>
+                <button id="toggle-view-button" class="action-button">
+                    <i class="fas fa-list"></i> Alternar Visualização
+                </button>
+                <button id="admin-button" class="action-button">
+                    <i class="fas fa-cog"></i> Administração
+                </button>
             </div>
         </div>
+
+        <!-- Recently viewed items section -->
+        <div id="historico-section" class="inventory-section historico-section" style="display: none;">
+            <h3><i class="fas fa-history"></i> Itens Visualizados Recentemente</h3>
+            <div id="historico-items" class="historico-items"></div>
+        </div>
+
+        <!-- Overlay for expanded cards -->
+        <div class="overlay" id="overlay"></div>
 
         <!-- Modal for item details -->
         <div id="item-modal" class="modal">
             <div class="modal-content">
                 <span class="close-modal">&times;</span>
-                <h3 id="modal-item-name"></h3>
+                <h3 id="modal-item-name" style="color: var(--primary-color);"></h3>
                 <div class="modal-details">
                     <!-- Details will be loaded dynamically -->
                 </div>
             </div>
         </div>
         
+        <!-- Admin Panel Modal -->
+        <div id="admin-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3><i class="fas fa-cog"></i> Painel de Administração - Suprimentos</h3>
+                <div id="admin-login">
+                    <p>Digite a senha para acessar o painel administrativo:</p>
+                    <input type="password" id="admin-password" placeholder="Senha">
+                    <button id="login-button" class="action-button">Entrar</button>
+                    <p id="login-error" style="color: red; display: none;">Senha incorreta!</p>
+                </div>
+                <div id="admin-panel" style="display: none;">
+                    <button id="back-to-login" class="action-button" style="margin-bottom: 20px;">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </button>
+                    
+                    <div id="admin-tabs">
+                        <button class="tab-button active" data-tab="inventory-management">Gerenciar Estoque</button>
+                        <button class="tab-button" data-tab="activity-log">Histórico de Atividades</button>
+                        <button class="tab-button" data-tab="ot-history">Histórico de OTs</button>
+                    </div>
+                    
+                    <div id="admin-content">
+                        <div id="inventory-management" class="admin-panel-content">
+                            <div class="admin-menu">
+                                <div class="admin-menu-item" onclick="document.getElementById('single-item-form').style.display='block'; document.getElementById('admin-inventory-list').style.display='none'">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <h4>Adicionar Item</h4>
+                                    <p>Cadastre um novo item no estoque</p>
+                                </div>
+                                
+                                <div class="admin-menu-item" onclick="document.getElementById('single-item-form').style.display='none'; document.getElementById('admin-inventory-list').style.display='block'; loadAdminInventoryList()">
+                                    <i class="fas fa-edit"></i>
+                                    <h4>Gerenciar Itens</h4>
+                                    <p>Edite ou remova itens existentes</p>
+                                </div>
+                                
+                                <div class="admin-menu-item" onclick="document.getElementById('transfer-form').scrollIntoView({behavior: 'smooth'})">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <h4>Transferências</h4>
+                                    <p>Transfira itens entre obras</p>
+                                </div>
+                                
+                                <div class="admin-menu-item" onclick="document.getElementById('receipt-form').scrollIntoView({behavior: 'smooth'})">
+                                    <i class="fas fa-truck-loading"></i>
+                                    <h4>Recebimentos</h4>
+                                    <p>Registre materiais recebidos</p>
+                                </div>
+                            </div>
+                            
+                            <div id="single-item-form" style="display: none;">
+                                <form id="add-item-form">
+                                    <div style="margin-bottom: 10px;">
+                                        <label for="new-item-id">Código:</label>
+                                        <input type="number" id="new-item-id" required>
+                                    </div>
+                                    <div style="margin-bottom: 10px;">
+                                        <label>Categoria: <span id="categoria-display">N/A</span></label>
+                                    </div>
+                                    <div style="margin-bottom: 10px;">
+                                        <label for="new-item-name">Nome:</label>
+                                        <input type="text" id="new-item-name" required>
+                                    </div>
+                                    <div style="margin-bottom: 10px;">
+                                        <label for="new-item-quantity">Quantidade:</label>
+                                        <input type="number" id="new-item-quantity" min="1" value="1" required>
+                                    </div>
+                                    <div style="margin-bottom: 10px;">
+                                        <label for="new-item-location">Localização (A1-A30):</label>
+                                        <input type="text" id="new-item-location" required pattern="[A-F][1-9]|[A-F][1-2][0-9]|[A-F]30">
+                                    </div>
+                                    <div style="margin-bottom: 10px;">
+                                        <label for="new-item-description">Descrição:</label>
+                                        <textarea id="new-item-description" required></textarea>
+                                    </div>
+                                    <div style="margin-bottom: 10px; display: none;" id="equiv-app-container">
+                                        <label for="new-item-equivalence">Equivalência:</label>
+                                        <input type="text" id="new-item-equivalence">
+                                    </div>
+                                    <div style="margin-bottom: 10px; display: none;" id="app-container">
+                                        <label for="new-item-application">Aplicação:</label>
+                                        <input type="text" id="new-item-application">
+                                    </div>
+                                    <div style="margin-bottom: 10px; display: none;" id="epi-field-container">
+                                        <label for="new-item-epi">CA de EPI:</label>
+                                        <input type="text" id="new-item-epi">
+                                    </div>
+                                    <div style="margin-bottom: 10px;">
+                                        <label for="obra-select">Obra:</label>
+                                        <select id="obra-select" required>
+                                            <option value="030">030 - CENTRAL DE EQUIP.</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="action-button">Adicionar Item</button>
+                                </form>
+                            </div>
+                            
+                            <div id="admin-inventory-list" style="display: none;">
+                                <p class="no-items">Busque um item para edição</p>
+                            </div>
+                            
+                            <div class="admin-section">
+                                <h4><i class="fas fa-exchange-alt"></i> Transferência Entre Obras</h4>
+                                <form id="transfer-form">
+                                    <div class="form-row">
+                                        <label for="transfer-item-code">Código do Item:</label>
+                                        <input type="number" id="transfer-item-code" required>
+                                    </div>
+                                    <div class="form-row">
+                                        <label for="transfer-from-obra">Obra de Origem:</label>
+                                        <select id="transfer-from-obra" required>
+                                            <option value="030">030 - CENTRAL DE EQUIP.</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-row">
+                                        <label for="transfer-to-obra">Obra de Destino:</label>
+                                        <select id="transfer-to-obra" required>
+                                            <option value="001">001 - ESCRITÓRIO BH</option>
+                                            <option value="219">219 - TRÊS MARIAS/MG</option>
+                                            <option value="248">248 - ARAXÁ/MG</option>
+                                            <option value="251">251 - TRÊS MARIAS/MG</option>
+                                            <option value="255">255 - BRUMADO/BA</option>
+                                            <option value="257">257 - NOVA LIMA/MG</option>
+                                            <option value="258">258 - BARÃO DE COCAIS/MG</option>
+                                            <option value="259">259 - BRUMADINHO/MG</option>
+                                            <option value="260">260 - CATALÃO/GO</option>
+                                            <option value="261">261 - CRIXÁS/GO</option>
+                                            <option value="262">262 - GUANHÃES/MG</option>
+                                            <option value="263">263 - UBERLÂNDIA/MG</option>
+                                            <option value="264">264 - RIO PARDO DE MINAS/MG</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-row">
+                                        <label for="transfer-location">Localização (Manter):</label>
+                                        <input type="text" id="transfer-location" readonly>
+                                    </div>
+                                    <div class="form-row autocomplete">
+                                        <label>Responsável pelo Envio:</label>
+                                        <input type="text" id="responsavel-envio-input" placeholder="Digite o nome ou e-mail" required>
+                                        <input type="hidden" id="responsavel-envio">
+                                        <div class="autocomplete-items" id="envio-suggestions"></div>
+                                    </div>
+                                    <div class="form-row autocomplete">
+                                        <label>Responsável pelo Recebimento:</label>
+                                        <input type="text" id="responsavel-recebimento-input" placeholder="Digite o nome ou e-mail" required>
+                                        <input type="hidden" id="responsavel-recebimento">
+                                        <div class="autocomplete-items" id="recebimento-suggestions"></div>
+                                    </div>
+                                    <button type="submit" class="action-button">
+                                        <i class="fas fa-truck-moving"></i> Confirmar Transferência
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <div class="admin-section">
+                                <h4><i class="fas fa-truck-loading"></i> Recebimento de Materiais (Exclusivo 030)</h4>
+                                <form id="receipt-form">
+                                    <div class="form-row">
+                                        <label for="receipt-ot-number">Número da OT:</label>
+                                        <input type="text" id="receipt-ot-number" required>
+                                    </div>
+                                    <div class="form-row">
+                                        <label for="receipt-from-obra">Obra Remetente:</label>
+                                        <select id="receipt-from-obra" required>
+                                            <option value="">Selecione...</option>
+                                            <option value="001">001 - ESCRITÓRIO BH</option>
+                                            <option value="219">219 - TRÊS MARIAS/MG</option>
+                                            <option value="248">248 - ARAXÁ/MG</option>
+                                            <option value="251">251 - TRÊS MARIAS/MG</option>
+                                            <option value="255">255 - BRUMADO/BA</option>
+                                            <option value="257">257 - NOVA LIMA/MG</option>
+                                            <option value="258">258 - BARÃO DE COCAIS/MG</option>
+                                            <option value="259">259 - BRUMADINHO/MG</option>
+                                            <option value="260">260 - CATALÃO/GO</option>
+                                            <option value="261">261 - CRIXÁS/GO</option>
+                                            <option value="262">262 - GUANHÃES/MG</option>
+                                            <option value="263">263 - UBERLÂNDIA/MG</option>
+                                            <option value="264">264 - RIO PARDO DE MINAS/MG</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-row autocomplete">
+                                        <label>Responsável pelo Envio:</label>
+                                        <input type="text" id="receipt-sender-input" placeholder="Digite o nome ou e-mail" required>
+                                        <input type="hidden" id="receipt-sender">
+                                        <div class="autocomplete-items" id="receipt-sender-suggestions"></div>
+                                    </div>
+                                    <div class="form-row">
+                                        <label for="receipt-items">Itens Recebidos (Código:Quantidade):</label>
+                                        <textarea id="receipt-items" placeholder="Ex: 1500008:1, 1500018:2" required></textarea>
+                                    </div>
+                                    <div class="form-row">
+                                        <label for="receipt-notes">Observações:</label>
+                                        <textarea id="receipt-notes"></textarea>
+                                    </div>
+                                    <button type="submit" class="action-button">
+                                        <i class="fas fa-check-circle"></i> Confirmar Recebimento
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <div class="admin-section">
+                                <h4><i class="fas fa-file-alt"></i> Ordem de Transferência em Massa</h4>
+                                <div class="transfer-section">
+                                    <div class="form-row autocomplete">
+                                        <label>Responsável pelo Envio:</label>
+                                        <input type="text" id="mass-sender-input" placeholder="Digite o nome ou e-mail">
+                                        <input type="hidden" id="mass-sender">
+                                        <div class="autocomplete-items" id="mass-sender-suggestions"></div>
+                                    </div>
+                                    
+                                    <div class="form-row autocomplete">
+                                        <label>Responsável pelo Recebimento:</label>
+                                        <input type="text" id="mass-receiver-input" placeholder="Digite o nome ou e-mail">
+                                        <input type="hidden" id="mass-receiver">
+                                        <div class="autocomplete-items" id="mass-receiver-suggestions"></div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <label>Itens (Código:Quantidade):</label>
+                                        <textarea id="mass-transfer-items" placeholder="Ex: 1500008:1, 1500018:2" required></textarea>
+                                    </div>
+                                    
+                                    <button id="confirm-mass-transfer" class="action-button">
+                                        <i class="fas fa-file-pdf"></i> Gerar OT e Transferir
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="admin-section">
+                                <h4><i class="fas fa-map-marked-alt"></i> Alteração Massiva de Localizações</h4>
+                                <div class="form-row">
+                                    <label for="current-prefix">Prefixo Atual:</label>
+                                    <select id="current-prefix">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                        <option value="E">E</option>
+                                        <option value="F">F</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label for="new-prefix">Novo Prefixo:</label>
+                                    <select id="new-prefix">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                        <option value="E">E</option>
+                                        <option value="F">F</option>
+                                    </select>
+                                </div>
+                                <button id="change-locations" class="action-button">
+                                    <i class="fas fa-sync-alt"></i> Alterar Todas as Localizações
+                                </button>
+                            </div>
+                            
+                            <div class="admin-section danger-zone">
+                                <h4><i class="fas fa-trash-alt"></i> Zona de Perigo</h4>
+                                <button id="clear-inventory" class="action-button danger">
+                                    <i class="fas fa-broom"></i> Limpar Todo o Estoque
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="activity-log" class="admin-panel-content" style="display: none;">
+                            <h4>Histórico de Atividades</h4>
+                            <button id="export-log-button" class="action-button">
+                                <i class="fas fa-file-download"></i> Exportar Histórico
+                            </button>
+                            <div id="activity-log-container">
+                                <!-- Log entries will be loaded dynamically -->
+                            </div>
+                        </div>
+                        
+                        <div id="ot-history" class="admin-panel-content" style="display: none;">
+                            <h4><i class="fas fa-history"></i> Histórico de Ordens de Transferência</h4>
+                            <div class="export-ot-history">
+                                <button id="export-ot-history" class="action-button">
+                                    <i class="fas fa-file-excel"></i> Exportar para Excel
+                                </button>
+                            </div>
+                            <div class="filters">
+                                <input type="date" id="ot-date-filter">
+                                <input type="text" id="ot-search" placeholder="Buscar por responsável ou obra">
+                            </div>
+                            <div id="ot-history-list" class="history-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <nav class="mobile-nav">
+            <button id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="mobile-menu">
+                <button id="mobile-search-btn"><i class="fas fa-search"></i> Buscar</button>
+                <button id="mobile-admin-btn"><i class="fas fa-cog"></i> Admin</button>
+                <button id="mobile-export-btn"><i class="fas fa-file-export"></i> Exportar</button>
+            </div>
+        </nav>
+        
         <footer>
-            <p>&copy; 2023 Sistema de Visualização de Estoque de Filtros</p>
+            <p>&copy; 2025 Todos direitos Reservados a Cimcop Engenharia - Por Magaiver.Santana</p>
         </footer>
     </div>
 
-    <script src="./script.js"></script>
-</body>
-</html>
     <script>
-        // Inventory data
-const inventoryData = [
-    { id: 1500008, name: "FILTRO DE COMBUSTIVEL HAMM 3411P", location: "A1", description: "Filtro para equipamento Hamm 3411P", quantity: 2 },
-    { id: 1500018, name: "FILTRO DE AR CONDICIONADO SECUNDARIO", location: "A1", description: "Filtro secundário para ar condicionado", quantity: 2 },
-    { id: 1500041, name: "FILTRO DE ÓLEO LUBRIFICANTE DO MOTOR", location: "A2", description: "Filtro para lubrificação do motor", quantity: 1 },
-    { id: 1500065, name: "FILTRO DE COMBUSTÍVEL CONSTELLATION 31320", location: "A2", description: "Filtro para Constellation 31320", quantity: 1 },
-    { id: 1500074, name: "FILTRO DO TANQUE HIDRAULICO HYVA", location: "A3", description: "Filtro para tanque hidráulico Hyva", quantity: 6 },
-    { id: 1500096, name: "FILTRO SECUNDÁRIO DE DIESEL", location: "A3", description: "Filtro secundário para diesel", quantity: 2 },
-    { id: 1500100, name: "FILTRO PRIMARIO DE AR DO MOTOR", location: "A4", description: "Filtro primário para ar do motor", quantity: 1 },
-    { id: 1500101, name: "FILTRO SECUNDARIO DE AR DO MOTOR", location: "A4", description: "Filtro secundário para ar do motor", quantity: 1 },
-    { id: 1500102, name: "FILTRO DE ÓLEO LUBRIFICANTE DO MOTOR", location: "A5", description: "Filtro para lubrificação do motor", quantity: 9 },
-    { id: 1500103, name: "FILTRO SECUNDÁRIO DE DIESEL AXOR 4144/43", location: "A5", description: "Filtro para Axor 4144/43", quantity: 8 }
-];
+        // Inventory data with additional fields and quantity
+        const inventoryData = [
+            { id: 1500008, name: "FILTRO DE COMBUSTIVEL HAMM 3411P", location: "A1", 
+              obra: "030", description: "Filtro para equipamento Hamm 3411P", quantity: 1,
+              equivalence: "Filtro equivalente XYZ123", application: "Motores diesel" },
+            { id: 1500018, name: "FILTRO DE AR CONDICIONADO SECUNDARIO", location: "A1", 
+              obra: "030", description: "Filtro secundário para ar condicionado", quantity: 1,
+              equivalence: "Filtro equivalente ABC456", application: "Sistemas de ar condicionado" },
+            { id: 1500041, name: "FILTRO DE ÓLEO LUBRIFICANTE DO MOTOR", location: "A2", 
+              obra: "030", description: "Filtro para lubrificação do motor", quantity: 1,
+              equivalence: "Filtro equivalente DEF789", application: "Motores em geral" },
+            { id: 1500065, name: "FILTRO DE COMBUSTÍVEL CONSTELLATION 31320", location: "A2", 
+              obra: "030", description: "Filtro para Constellation 31320", quantity: 1,
+              equivalence: "Filtro equivalente GHI012", application: "Caminhões Constellation" },
+            { id: 1500074, name: "FILTRO DO TANQUE HIDRAULICO HYVA", location: "A3", 
+              obra: "030", description: "Filtro para tanque hidráulico Hyva", quantity: 1,
+              equivalence: "Filtro equivalente JKL345", application: "Sistemas hidráulicos" },
+            { id: 1500096, name: "FILTRO SECUNDÁRIO DE DIESEL", location: "A3", 
+              obra: "030", description: "Filtro secundário para diesel", quantity: 1,
+              equivalence: "Filtro equivalente MNO678", application: "Sistemas de combustível" },
+            { id: 1500100, name: "FILTRO PRIMARIO DE AR DO MOTOR", location: "A4", 
+              obra: "030", description: "Filtro primário para ar do motor", quantity: 1,
+              equivalence: "Filtro equivalente PQR901", application: "Admissão de ar" },
+            { id: 1500101, name: "FILTRO SECUNDARIO DE AR DO MOTOR", location: "A4", 
+              obra: "030", description: "Filtro secundário para ar do motor", quantity: 1,
+              equivalence: "Filtro equivalente STU234", application: "Admissão de ar secundária" },
+            { id: 1500102, name: "FILTRO DE ÓLEO LUBRIFICANTE DO MOTOR", location: "A5", 
+              obra: "030", description: "Filtro para lubrificação do motor", quantity: 1,
+              equivalence: "Filtro equivalente VWX567", application: "Lubrificação de motores" },
+            { id: 1500103, name: "FILTRO SECUNDÁRIO DE DIESEL AXOR 4144/43", location: "A5", 
+              obra: "030", description: "Filtro para Axor 4144/43", quantity: 1,
+              equivalence: "Filtro equivalente YZA890", application: "Caminhões Axor" },
+            { id: 4200001, name: "FILTRO EPI XYZ", location: "A10", 
+              obra: "030", description: "Filtro para equipamento de proteção", quantity: 1,
+              epiCA: "12345-67" }
+        ];
 
-// Load inventory items
-function loadInventoryItems(items) {
-    const inventoryList = document.getElementById("inventory-list");
-    inventoryList.innerHTML = "";
-    
-    items.forEach(item => {
-        const itemElement = document.createElement("div");
-        itemElement.className = "inventory-item";
-        
-        if (item.quantity <= 3) {
-            itemElement.classList.add("low-stock");
-        }
-        
-        let quantityHtml = `Quantidade: ${item.quantity}`;
-        if (item.quantity <= 3) {
-            quantityHtml += ` <span class="low-stock-indicator">Estoque Baixo</span>`;
-        }
-        
-        itemElement.innerHTML = `
-            <div class="item-code">Código: ${item.id}</div>
-            <div class="item-name">${item.name}</div>
-            <div class="item-location">Localização: ${item.location}</div>
-            <div class="item-description">${item.description}</div>
-            <div class="item-quantity">${quantityHtml}</div>
-            <button class="details-button" onclick="showItemDetails(${item.id})">
-                <i class="fas fa-info-circle"></i> Detalhes
-            </button>
-        `;
-        
-        inventoryList.appendChild(itemElement);
-    });
-}
+        // Activity log
+        let activityLog = [];
 
-// Update statistics
-function updateStats() {
-    document.getElementById("total-items").textContent = inventoryData.length;
-    
-    const totalQuantity = inventoryData.reduce((sum, item) => sum + item.quantity, 0);
-    document.getElementById("total-quantity").textContent = totalQuantity;
-    
-    const uniqueLocations = new Set(inventoryData.map(item => item.location)).size;
-    document.getElementById("total-locations").textContent = uniqueLocations;
-}
+        // Categorias de itens
+        const categoriasItens = {
+            110: { nome: "COMBUSTÍVEIS", requer: [] },
+            120: { nome: "CORREIAS, POLIAS E TENSORES", requer: [] },
+            140: { nome: "FERRAMENTAS", requer: [] },
+            150: { nome: "FILTROS", requer: [] },
+            160: { nome: "LUBRIFICANTES", requer: [] },
+            170: { nome: "PEÇAS P/ SISTEMA HID. E PNEUM.", requer: [] },
+            180: { nome: "MATERIAL DE DESGASTE RÁPIDO", requer: [] },
+            190: { nome: "MATERIAIS ELÉTRICOS", requer: [] },
+            200: { nome: "MATERIAIS DE CONSUMO/OFICINA", requer: [] },
+            220: { nome: "MATERIAL RODANTE", requer: [] },
+            230: { nome: "PNEUS E ASSOCIADOS", requer: [] },
+            240: { nome: "PORCAS, PARAFUSOS E ARRUELAS", requer: [] },
+            250: { nome: "PEÇAS P/ MANCAIS E ARTICULAÇÕES", requer: [] },
+            270: { nome: "SERVIÇOS DE TERCEIROS", requer: [] },
+            280: { nome: "PEÇAS P/ EQUIPAMENTOS", requer: [] },
+            400: { nome: "MATERIAL DE EXPEDIENTE/ESCRIT.", requer: [] },
+            420: { nome: "EPI MATERIAIS DE SEGURANÇA", requer: ["CA"] },
+            440: { nome: "MATERIAL DE CONSTRUÇÃO", requer: [] },
+            450: { nome: "BENS DE NATUREZA PERMANENTE", requer: [] }
+        };
 
-// Setup search functionality
-function setupSearch() {
-    const searchInput = document.getElementById("search-input");
-    const searchButton = document.getElementById("search-button");
-    
-    function performSearch() {
-        const searchTerm = searchInput.value.toLowerCase();
-        
-        if (searchTerm.trim() === "") {
-            loadInventoryItems(inventoryData);
-            return;
-        }
-        
-        const filteredItems = inventoryData.filter(item => 
-            item.name.toLowerCase().includes(searchTerm) || 
-            item.location.toLowerCase().includes(searchTerm) ||
-            item.description.toLowerCase().includes(searchTerm) ||
-            item.id.toString().includes(searchTerm)
-        );
-        
-        loadInventoryItems(filteredItems);
-    }
-    
-    searchButton.addEventListener("click", performSearch);
-    searchInput.addEventListener("keyup", (event) => {
-        if (event.key === "Enter") {
-            performSearch();
-        }
-    });
-}
+        // Lista de obras
+        const obras = {
+            "001": "ESCRITÓRIO BH",
+            "030": "CENTRAL DE EQUIP.",
+            "219": "TRÊS MARIAS/MG",
+            "248": "ARAXÁ/MG",
+            "251": "TRÊS MARIAS/MG",
+            "255": "BRUMADO/BA",
+            "257": "NOVA LIMA/MG",
+            "258": "BARÃO DE COCAIS/MG",
+            "259": "BRUMADINHO/MG",
+            "260": "CATALÃO/GO",
+            "261": "CRIXÁS/GO",
+            "262": "GUANHÃES/MG",
+            "263": "UBERLÂNDIA/MG",
+            "264": "RIO PARDO DE MINAS/MG"
+        };
 
-// Setup location filters
-function setupFilters() {
-    const locationFilter = document.getElementById("location-filter");
-    
-    locationFilter.addEventListener("change", () => {
-        const filterValue = locationFilter.value;
-        let filteredItems = [...inventoryData];
+        // Lista de responsáveis
+        const responsaveis = {
+            "kaua.santos": "Kaua Pablo da Silva Reis Santos",
+            "hueslei.guedes": "Hueslei Duarte do Couto Guedes",
+            "francisco.andrade": "Francisco Andrade",
+            "adson.barbosa": "Adson Barbosa",
+            "marcello.soares": "Marcello Vitor Silva Soares",
+            "matheus.silva": "Matheus Tadeu Domingos da Silva",
+            "fabricio.oliveira": "Fabricio Marcio de Oliveira",
+            "wagner.moraes": "Wagner Mota Ramos Moraes",
+            "everton.teixeira": "Everton Teixeira",
+            "paulo.santos": "Paulo Ricardo Barcelos Santos",
+            "elton.gomes": "Elton Gomes",
+            "samuel.gonzaga": "Samuel Lucas Alves Simoes Gonzaga",
+            "magaiver.santana": "Magaiver Braga Santana",
+            "diogenes.fagundes": "Diogenes de Freitas Fagundes",
+            "alisson.silva": "Alisson Rodrigo Viana Silva",
+            "samuel.viana": "Samuel Matias Viana",
+            "ediana.fontes": "Ediana Maria da Silva Fontes",
+            "maria.costa": "Maria Clara Lima Costa",
+            "ediwaldo.souza": "Ediwaldo Junio de Souza",
+            "paulo.medeiros": "Paulo Henrique de Medeiros Santos",
+            "william.pereira": "William Ferreira Pereira",
+            "jose.silva": "José Vicente",
+            "alexandre.henrique": "Alexandre Henrique de Oliveira"
+        };
+
+        // Histórico de OTs
+        let otHistory = [];
+        let lastOTNumber = 0;
+
+        // Variables for new features
+        let itemsPorPagina = 50;
+        let paginaAtual = 1;
+        let totalPaginas = 1;
+        let dadosFiltrados = [];
+        const itemsVistos = [];
+        const MAX_HISTORICO = 10;
+
+        // =============================================
+        // CORREÇÃO: Funções adicionadas que estavam faltando
+        // =============================================
         
-        if (filterValue) {
-            const [start, end] = filterValue.split("-");
-            filteredItems = inventoryData.filter(item => {
-                const locationNum = parseInt(item.location.substring(1));
-                const startNum = parseInt(start.substring(1));
-                const endNum = parseInt(end.substring(1));
-                return locationNum >= startNum && locationNum <= endNum;
+        function editItem(id) {
+            showItemDetails(id);
+        }
+
+        function downloadOT(otNumber) {
+            const ot = otHistory.find(o => o.id === otNumber);
+            if (ot) {
+                generateOTPDF(ot);
+            } else {
+                alert("OT não encontrada!");
+            }
+        }
+
+        function validateTransfer(itemId, fromObra, toObra) {
+            if (!itemId || isNaN(itemId)) {
+                alert("Código do item inválido!");
+                return false;
+            }
+            
+            if (fromObra === toObra) {
+                alert("A obra de origem e destino devem ser diferentes!");
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Generate all location divisions from A1 to A30 plus "Todos" card
+        function generateAllDivisions() {
+            const divisions = [];
+            for (let i = 1; i <= 30; i++) {
+                divisions.push(`A${i}`);
+            }
+            divisions.push("Todos");
+            return divisions;
+        }
+
+        // Get category from item ID
+        function getCategoria(itemId) {
+            const prefixo = Math.floor(itemId / 10000);
+            return categoriasItens[prefixo] || { nome: "DESCONHECIDA", requer: [] };
+        }
+
+        // Load inventory items grouped by division
+        function loadInventoryItems(items) {
+            const divisionContainer = document.getElementById("division-container");
+            divisionContainer.innerHTML = "";
+            
+            const allDivisions = generateAllDivisions();
+            const itemsByDivision = groupItemsByDivision(items);
+            
+            allDivisions.forEach(division => {
+                const divisionItems = division === "Todos" ? items : (itemsByDivision[division] || []);
+                
+                // Só cria o card se tiver itens OU for o card "Todos"
+                if (divisionItems.length > 0 || division === "Todos") {
+                    const divisionCard = createDivisionCard(division, divisionItems, division === "Todos");
+                    divisionContainer.appendChild(divisionCard);
+                    
+                    // Oculta cards vazios (exceto "Todos")
+                    if (division !== "Todos" && divisionItems.length === 0) {
+                        divisionCard.style.display = "none";
+                    }
+                }
+            });
+            
+            setupDivisionCards();
+            updateStats();
+        }
+
+        // Group items by their location (division)
+        function groupItemsByDivision(items) {
+            return items.reduce((groups, item) => {
+                const division = item.location;
+                if (!groups[division]) {
+                    groups[division] = [];
+                }
+                groups[division].push(item);
+                return groups;
+            }, {});
+        }
+
+        // Create a division card element
+        function createDivisionCard(division, items, isAllStock = false) {
+            const card = document.createElement("div");
+            card.className = `division-card ${isAllStock ? 'all-stock' : ''}`;
+            card.dataset.division = division;
+            
+            const itemCount = isAllStock ? items.length : items.reduce((sum, item) => sum + item.quantity, 0);
+            
+            card.innerHTML = `
+                <div class="division-header">
+                    <h3><i class="fas ${isAllStock ? 'fa-boxes' : 'fa-map-marker-alt'}"></i> ${division} (${itemCount} itens)</h3>
+                    <button class="expand-button"><i class="fas fa-expand"></i></button>
+                </div>
+                <div class="division-content">
+                    <div class="division-items">
+                        ${items.length > 0 ? 
+                            items.map(item => createDivisionItem(item, isAllStock)).join("") : 
+                            '<p style="text-align: center; color: var(--secondary-color);">Nenhum item nesta divisão</p>'}
+                    </div>
+                    ${isAllStock ? `
+                    <div class="location-legend">
+                        <div class="legend-item"><span class="legend-color" style="background:#3498db"></span> Local A1</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#2ecc71"></span> Local A2</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#e74c3c"></span> Local A3</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#f39c12"></span> Local A4</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#9b59b6"></span> Local A5</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#1abc9c"></span> Local A6</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#d35400"></span> Local A7</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#34495e"></span> Local A8</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#16a085"></span> Local A9</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#8e44ad"></span> Local A10</div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Create HTML for a single item in division
+        function createDivisionItem(item, isAllStock = false) {
+            const categoria = getCategoria(item.id);
+            
+            return `
+                <div class="division-item" ${isAllStock ? `data-location="${item.location}"` : ''}>
+                    <div class="item-header">
+                        <span class="item-code">Código: ${item.id}</span>
+                        ${isAllStock ? `<span class="item-location">${item.location}</span>` : ''}
+                        <span class="item-quantity">Qtd: ${item.quantity}</span>
+                    </div>
+                    <div class="item-category">Categoria: ${categoria.nome}</div>
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-details">
+                        <div>${item.description}</div>
+                        ${item.equivalence ? `<div class="item-equivalence">${item.equivalence}</div>` : ''}
+                        ${item.application ? `<div class="item-application">${item.application}</div>` : ''}
+                        ${item.epiCA ? `<div class="item-epi"><strong>CA EPI:</strong> ${item.epiCA}</div>` : ''}
+                    </div>
+                    <button class="details-button" data-item-id="${item.id}">
+                        <i class="fas fa-info-circle"></i> Detalhes
+                    </button>
+                </div>
+            `;
+        }
+
+        // Setup expand/collapse functionality for division cards
+        function setupDivisionCards() {
+            const cards = document.querySelectorAll(".division-card");
+            const overlay = document.getElementById("overlay");
+            
+            cards.forEach(card => {
+                const header = card.querySelector(".division-header");
+                const expandBtn = card.querySelector(".expand-button");
+                
+                header.addEventListener("click", (e) => {
+                    // Don't toggle if click was on the expand button (it has its own handler)
+                    if (e.target.closest(".expand-button")) return;
+                    
+                    card.classList.toggle("expanded");
+                    overlay.classList.toggle("active");
+                    
+                    // Close any other expanded card
+                    cards.forEach(otherCard => {
+                        if (otherCard !== card && otherCard.classList.contains("expanded")) {
+                            otherCard.classList.remove("expanded");
+                        }
+                    });
+                });
+                
+                expandBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    card.classList.toggle("expanded");
+                    overlay.classList.toggle("active");
+                    
+                    // Close any other expanded card
+                    cards.forEach(otherCard => {
+                        if (otherCard !== card && otherCard.classList.contains("expanded")) {
+                            otherCard.classList.remove("expanded");
+                        }
+                    });
+                });
+            });
+            
+            // Close expanded card when clicking overlay
+            overlay.addEventListener("click", () => {
+                const expandedCard = document.querySelector(".division-card.expanded");
+                if (expandedCard) {
+                    expandedCard.classList.remove("expanded");
+                    overlay.classList.remove("active");
+                }
+            });
+            
+            // Setup details buttons with proper event delegation
+            document.querySelectorAll(".details-button").forEach(button => {
+                button.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    const itemId = parseInt(this.getAttribute("data-item-id"));
+                    showItemDetails(itemId);
+                });
             });
         }
-        
-        loadInventoryItems(filteredItems);
-    });
-}
 
-// Export to CSV
-function exportToCSV() {
-    let csvContent = "data:text/csv;charset=utf-8,";
-    
-    csvContent += "Código,Nome,Localização,Descrição,Quantidade\n";
-    
-    inventoryData.forEach(item => {
-        const row = [
-            item.id,
-            item.name,
-            item.location,
-            item.description,
-            item.quantity
-        ].join(",");
-        csvContent += row + "\n";
-    });
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "estoque_filtros.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
+        // Update statistics
+        function updateStats() {
+            const totalItems = inventoryData.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById("total-items").textContent = totalItems;
+            
+            const uniqueLocations = new Set(inventoryData.map(item => item.location)).size;
+            document.getElementById("total-locations").textContent = uniqueLocations;
+        }
 
-// Show item details
-function showItemDetails(id) {
-    const item = inventoryData.find(item => item.id === id);
-    
-    if (item) {
-        alert(`
-            Código: ${item.id}
-            Nome: ${item.name}
-            Localização: ${item.location}
-            Descrição: ${item.description}
-            Quantidade: ${item.quantity}
-        `);
+        // Setup search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById("search-input");
+            const searchButton = document.getElementById("search-button");
+            
+            function performSearch() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const categoriaSelecionada = document.getElementById("category-filter").value;
+                const locationSelecionada = document.getElementById("location-filter").value;
+                
+                const filteredItems = inventoryData.filter(item => {
+                    const categoriaItem = Math.floor(item.id / 10000).toString();
+                    const matchesCategory = categoriaSelecionada === "all" || categoriaSelecionada === categoriaItem;
+                    const matchesLocation = locationSelecionada === "all" || item.location === locationSelecionada;
+                    
+                    return matchesCategory && matchesLocation && (
+                        item.name.toLowerCase().includes(searchTerm) || 
+                        item.location.toLowerCase().includes(searchTerm) ||
+                        item.description.toLowerCase().includes(searchTerm) ||
+                        (item.equivalence && item.equivalence.toLowerCase().includes(searchTerm)) ||
+                        (item.application && item.application.toLowerCase().includes(searchTerm)) ||
+                        item.id.toString().includes(searchTerm)
+                    );
+                });
+                
+                loadInventoryItems(filteredItems);
+            }
+            
+            searchButton.addEventListener("click", performSearch);
+            searchInput.addEventListener("keyup", (event) => {
+                if (event.key === "Enter") {
+                    performSearch();
+                }
+            });
+            
+            // Add event listeners for filters
+            document.getElementById("category-filter").addEventListener("change", performSearch);
+            document.getElementById("location-filter").addEventListener("change", performSearch);
+            
+            // Fill category filter
+            const categoryFilter = document.getElementById("category-filter");
+            for (const [code, cat] of Object.entries(categoriasItens)) {
+                categoryFilter.innerHTML += `<option value="${code}">${cat.nome}</option>`;
+            }
+            
+            // Fill location filter
+            const locationFilter = document.getElementById("location-filter");
+            const uniqueLocations = [...new Set(inventoryData.map(item => item.location))].sort();
+            uniqueLocations.forEach(location => {
+                locationFilter.innerHTML += `<option value="${location}">${location}</option>`;
+            });
+        }
+
+        // Show item details in modal with edit form
+        function showItemDetails(id) {
+            const item = inventoryData.find(item => item.id === id);
+            
+            if (item) {
+                const categoria = getCategoria(item.id);
+                const modal = document.getElementById("item-modal");
+                const modalName = document.getElementById("modal-item-name");
+                const modalDetails = document.querySelector(".modal-details");
+                
+                modalName.textContent = `${item.name} (${categoria.nome})`;
+                
+                modalDetails.innerHTML = `
+                    <form id="edit-item-form" style="display: grid; gap: 15px;">
+                        <div>
+                            <label><strong>Código:</strong></label>
+                            <input type="number" id="edit-item-id" value="${item.id}" readonly class="form-input">
+                        </div>
+                        <div>
+                            <label><strong>Nome:</strong></label>
+                            <input type="text" id="edit-item-name" value="${item.name}" class="form-input" required>
+                        </div>
+                        <div>
+                            <label><strong>Categoria:</strong></label>
+                            <input type="text" value="${categoria.nome}" readonly class="form-input">
+                        </div>
+                        <div>
+                            <label><strong>Quantidade:</strong></label>
+                            <input type="number" id="edit-item-quantity" value="${item.quantity}" min="1" class="form-input" required>
+                        </div>
+                        <div>
+                            <label><strong>Localização:</strong></label>
+                            <select id="edit-item-location" class="form-input" required>
+                                ${generateLocationOptions(item.location)}
+                            </select>
+                        </div>
+                        <div>
+                            <label><strong>Obra:</strong></label>
+                            <select id="edit-item-obra" class="form-input" required>
+                                ${generateObraOptions(item.obra)}
+                            </select>
+                        </div>
+                        <div>
+                            <label><strong>Descrição:</strong></label>
+                            <textarea id="edit-item-description" class="form-input">${item.description}</textarea>
+                        </div>
+                        ${item.equivalence !== undefined ? `
+                        <div>
+                            <label><strong>Equivalência:</strong></label>
+                            <input type="text" id="edit-item-equivalence" value="${item.equivalence || ''}" class="form-input">
+                        </div>
+                        ` : ''}
+                        ${item.application !== undefined ? `
+                        <div>
+                            <label><strong>Aplicação:</strong></label>
+                            <input type="text" id="edit-item-application" value="${item.application || ''}" class="form-input">
+                        </div>
+                        ` : ''}
+                        ${item.epiCA !== undefined ? `
+                        <div>
+                            <label><strong>CA EPI:</strong></label>
+                            <input type="text" id="edit-item-epi" value="${item.epiCA || ''}" class="form-input">
+                        </div>
+                        ` : ''}
+                        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                            <button type="button" onclick="document.getElementById('item-modal').style.display='none'" class="action-button danger">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                            <button type="submit" class="action-button">
+                                <i class="fas fa-save"></i> Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                `;
+                
+                // Add form submit handler
+                document.getElementById("edit-item-form").addEventListener("submit", function(e) {
+                    e.preventDefault();
+                    
+                    // Verificar senha antes de salvar
+                    const password = prompt("Para editar itens, digite a senha:");
+                    if (password !== "0301957") {
+                        alert("Senha incorreta! Alterações não salvas.");
+                        return;
+                    }
+                    
+                    // Update item data
+                    item.name = document.getElementById("edit-item-name").value;
+                    item.quantity = parseInt(document.getElementById("edit-item-quantity").value);
+                    item.location = document.getElementById("edit-item-location").value;
+                    item.obra = document.getElementById("edit-item-obra").value;
+                    item.description = document.getElementById("edit-item-description").value;
+                    
+                    if (item.equivalence !== undefined) {
+                        item.equivalence = document.getElementById("edit-item-equivalence").value;
+                    }
+                    
+                    if (item.application !== undefined) {
+                        item.application = document.getElementById("edit-item-application").value;
+                    }
+                    
+                    if (item.epiCA !== undefined) {
+                        item.epiCA = document.getElementById("edit-item-epi").value;
+                    }
+                    
+                    logMovement(item, "Edição", {
+                        fromObra: item.obra,
+                        location: item.location
+                    });
+                    
+                    loadInventoryItems(inventoryData);
+                    loadAdminInventoryList();
+                    updateStats();
+                    
+                    modal.style.display = "none";
+                    alert("Item atualizado com sucesso!");
+                });
+                
+                modal.style.display = "block";
+                
+                // Close modal when clicking on X
+                document.querySelector("#item-modal .close-modal").onclick = function() {
+                    modal.style.display = "none";
+                };
+                
+                // Close modal when clicking outside
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                };
+            }
+        }
+
+        // Generate location options for select
+        function generateLocationOptions(selected = "") {
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+            let options = '';
+            
+            letters.forEach(letter => {
+                for (let i = 1; i <= 30; i++) {
+                    const value = `${letter}${i}`;
+                    options += `<option value="${value}" ${selected === value ? 'selected' : ''}>${value}</option>`;
+                }
+            });
+            
+            return options;
+        }
+
+        // Generate obra options for select
+        function generateObraOptions(selected = "") {
+            let options = '';
+            for (const [cod, nome] of Object.entries(obras)) {
+                options += `<option value="${cod}" ${selected === cod ? 'selected' : ''}>${cod} - ${nome}</option>`;
+            }
+            return options;
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            csvContent += "Código,Nome,Categoria,Quantidade,Localização,Obra,Descrição,Equivalência,Aplicação,CA EPI\n";
+            
+            inventoryData.forEach(item => {
+                const categoria = getCategoria(item.id);
+                const row = [
+                    item.id,
+                    `"${item.name}"`,
+                    `"${categoria.nome}"`,
+                    item.quantity,
+                    item.location,
+                    `"${item.obra} - ${obras[item.obra] || ''}"`,
+                    `"${item.description}"`,
+                    `"${item.equivalence || ''}"`,
+                    `"${item.application || ''}"`,
+                    `"${item.epiCA || ''}"`
+                ].join(",");
+                csvContent += row + "\n";
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "estoque_CIMCOP_030.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            logActivity("Exportou lista de estoque para CSV");
+        }
+
+        // Print inventory list
+        function printInventory() {
+            const printWindow = window.open('', '_blank');
+            
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Estoque de CIMCOP - Impressão</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        h1 { text-align: center; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Relatório de Estoque CIMCOP - 030</h1>
+                    <p>Data de impressão: ${new Date().toLocaleString()}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Categoria</th>
+                                <th>Nome</th>
+                                <th>Quantidade</th>
+                                <th>Localização</th>
+                                <th>Obra</th>
+                                <th>Descrição</th>
+                                <th>Equivalência</th>
+                                <th>Aplicação</th>
+                                <th>CA EPI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `);
+            
+            inventoryData.forEach(item => {
+                const categoria = getCategoria(item.id);
+                
+                printWindow.document.write(`
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${categoria.nome}</td>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.location}</td>
+                        <td>${item.obra} - ${obras[item.obra] || ''}</td>
+                        <td>${item.description}</td>
+                        <td>${item.equivalence || ''}</td>
+                        <td>${item.application || ''}</td>
+                        <td>${item.epiCA || ''}</td>
+                    </tr>
+                `);
+            });
+            
+            printWindow.document.write(`
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+            
+            logActivity("Imprimiu lista de estoque");
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            // Create a table with all data
+            let table = '<table>';
+            table += '<tr><th>Código</th><th>Nome</th><th>Categoria</th><th>Quantidade</th><th>Localização</th><th>Descrição</th></tr>';
+            
+            // Add all items
+            inventoryData.forEach(item => {
+                const categoria = getCategoria(item.id);
+                table += `<tr>
+                    <td>${item.id}</td>
+                    <td>${item.name}</td>
+                    <td>${categoria.nome}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.location}</td>
+                    <td>${item.description}</td>
+                </tr>`;
+            });
+            
+            table += '</table>';
+            
+            // Convert to Excel-compatible format
+            const uri = 'data:application/vnd.ms-excel;base64,';
+            const template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Estoque</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>';
+            
+            const base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) };
+            const format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) };
+            
+            const ctx = {table: table};
+            const link = document.createElement("a");
+            link.download = "Estoque_CIMCOP_" + new Date().toISOString().slice(0,10) + ".xls";
+            link.href = uri + base64(format(template, ctx));
+            link.click();
+            
+            logActivity("Exportou lista de estoque para Excel");
+        }
+
+        // Log activity
+        function logActivity(message) {
+            const timestamp = new Date().toLocaleString();
+            activityLog.push({
+                timestamp,
+                action: "Sistema",
+                message,
+                user: "Usuário Local"
+            });
+            updateActivityLog();
+        }
+
+        // Log movement
+        function logMovement(item, action, details) {
+            const movimento = {
+                timestamp: new Date().toLocaleString(),
+                itemId: item.id,
+                itemName: item.name,
+                action,
+                quantity: item.quantity,
+                obraOrigem: details.fromObra || item.obra,
+                obraDestino: details.toObra || item.obra,
+                localizacao: details.location || item.location,
+                usuario: "Usuário Atual",
+                remaining: details.remaining,
+                otNumber: details.otNumber,
+                notes: details.notes
+            };
+            
+            activityLog.push(movimento);
+            updateActivityLog();
+        }
+
+        // Update activity log display
+        function updateActivityLog() {
+            const logContainer = document.getElementById("activity-log-container");
+            
+            if (logContainer) {
+                if (activityLog.length === 0) {
+                    logContainer.innerHTML = '<p style="text-align: center; color: var(--secondary-color);">Nenhuma atividade registrada.</p>';
+                    return;
+                }
+                
+                // Agrupe por tipo de ação
+                const actions = {
+                    "Adição": [],
+                    "Edição": [],
+                    "Remoção": [],
+                    "Transferência": [],
+                    "Recebimento": [],
+                    "Sistema": []
+                };
+                
+                activityLog.forEach(entry => {
+                    if (actions[entry.action]) {
+                        actions[entry.action].push(entry);
+                    }
+                });
+                
+                // Crie a interface com abas
+                logContainer.innerHTML = `
+                    <div class="log-tabs">
+                        <button class="log-tab active" data-tab="all">Todos</button>
+                        ${Object.keys(actions).map(action => `
+                            <button class="log-tab" data-tab="${action.toLowerCase()}">${action}</button>
+                        `).join('')}
+                    </div>
+                    <div class="log-content">
+                        ${createLogTable(activityLog, "all")}
+                        ${Object.entries(actions).map(([action, entries]) => `
+                            <div id="${action.toLowerCase()}-log" style="display:none;">
+                                ${createLogTable(entries, action.toLowerCase())}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                // Adicione os listeners das abas
+                document.querySelectorAll(".log-tab").forEach(tab => {
+                    tab.addEventListener("click", function() {
+                        // Remove active class from all tabs
+                        document.querySelectorAll(".log-tab").forEach(t => t.classList.remove("active"));
+                        
+                        // Add active class to clicked tab
+                        this.classList.add("active");
+                        
+                        // Hide all content
+                        document.querySelectorAll(".log-content > div").forEach(content => {
+                            content.style.display = "none";
+                        });
+                        
+                        if (this.dataset.tab === "all") {
+                            document.querySelector(".log-content > table").style.display = "";
+                        } else {
+                            document.getElementById(`${this.dataset.tab}-log`).style.display = "";
+                        }
+                    });
+                });
+            }
+        }
+
+        // Create log table
+        function createLogTable(entries, id) {
+            return `
+                <table id="${id}-table" style="width: 100%; border-collapse: collapse; margin-top: 10px; ${id !== 'all' ? 'display: none;' : ''}">
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Item</th>
+                            <th>Ação</th>
+                            <th>Quantidade</th>
+                            <th>Obra Origem</th>
+                            <th>Obra Destino</th>
+                            <th>Localização</th>
+                            <th>OT</th>
+                            <th>Usuário</th>
+                            <th>Observações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${entries.map(entry => `
+                            <tr>
+                                <td>${entry.timestamp}</td>
+                                <td>${entry.itemName || ''} (${entry.itemId || ''})</td>
+                                <td>${entry.action || entry.message || ''}</td>
+                                <td>${entry.quantity || ''}</td>
+                                <td>${entry.obraOrigem || ''}</td>
+                                <td>${entry.obraDestino || ''}</td>
+                                <td>${entry.localizacao || ''}</td>
+                                <td>${entry.otNumber || ''}</td>
+                                <td>${entry.usuario || ''}</td>
+                                <td>${entry.notes || ''}</td>
+                            </tr>
+                        `).reverse().join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Export activity log
+        function exportActivityLog() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Data/Hora,Código,Nome do Item,Ação,Quantidade,Obra Origem,Obra Destino,Localização,OT,Usuário,Observações\n";
+            
+            activityLog.forEach(entry => {
+                const row = [
+                    `"${entry.timestamp}"`,
+                    entry.itemId || '',
+                    `"${entry.itemName || ''}"`,
+                    `"${entry.action || entry.message || ''}"`,
+                    entry.quantity || '',
+                    `"${entry.obraOrigem || ''}"`,
+                    `"${entry.obraDestino || ''}"`,
+                    `"${entry.localizacao || ''}"`,
+                    `"${entry.otNumber || ''}"`,
+                    `"${entry.usuario || ''}"`,
+                    `"${entry.notes || ''}"`
+                ].join(",");
+                csvContent += row + "\n";
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `historico_atividades_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Load admin inventory list
+        function loadAdminInventoryList(searchTerm = "") {
+            const adminList = document.getElementById("admin-inventory-list");
+            
+            // HTML do campo de busca
+            adminList.innerHTML = `
+                <div class="search-admin-item">
+                    <input type="text" id="admin-search-item" placeholder="Digite o código ou nome do item" value="${searchTerm}">
+                    <button id="admin-search-button" class="action-button">
+                        <i class="fas fa-search"></i> Buscar Item
+                    </button>
+                </div>
+                <div id="admin-item-result">
+                    ${searchTerm ? showSearchedItem(searchTerm) : '<p class="no-items">Busque um item para edição</p>'}
+                </div>
+            `;
+
+            // Event listeners
+            document.getElementById("admin-search-button").addEventListener("click", () => {
+                const term = document.getElementById("admin-search-item").value;
+                loadAdminInventoryList(term);
+            });
+
+            document.getElementById("admin-search-item").addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    const term = document.getElementById("admin-search-item").value;
+                    loadAdminInventoryList(term);
+                }
+            });
+        }
+
+        // Show searched item in admin panel
+        function showSearchedItem(searchTerm) {
+            const term = searchTerm.toString().toLowerCase();
+            const foundItems = inventoryData.filter(item => 
+                item.id.toString().includes(term) || 
+                item.name.toLowerCase().includes(term)
+            );
+
+            if (foundItems.length === 0) {
+                return '<p class="no-items">Nenhum item encontrado</p>';
+            }
+
+            return foundItems.map(item => `
+                <div class="admin-item-card">
+                    <h4>${item.name} (Código: ${item.id})</h4>
+                    <div class="item-details">
+                        <p><strong>Quantidade em estoque:</strong> ${item.quantity}</p>
+                        <p><strong>Localização:</strong> ${item.location}</p>
+                        <p><strong>Obra:</strong> ${item.obra} - ${obras[item.obra] || ''}</p>
+                        ${item.equivalence ? `<p><strong>Equivalência:</strong> ${item.equivalence}</p>` : ''}
+                        ${item.application ? `<p><strong>Aplicação:</strong> ${item.application}</p>` : ''}
+                        ${item.epiCA ? `<p><strong>CA EPI:</strong> ${item.epiCA}</p>` : ''}
+                    </div>
+                    <div class="item-actions">
+                        <div class="remove-quantity" style="margin-bottom: 10px;">
+                            <label for="remove-quantity-${item.id}">Quantidade a remover:</label>
+                            <input type="number" id="remove-quantity-${item.id}" min="1" max="${item.quantity}" value="1">
+                        </div>
+                        <button onclick="editItem(${item.id})" class="action-button">
+                            <i class="fas fa-edit"></i> Editar Item
+                        </button>
+                        <button onclick="deleteItem(${item.id}, document.getElementById('remove-quantity-${item.id}').value)" class="action-button danger">
+                            <i class="fas fa-trash"></i> Remover Quantidade
+                        </button>
+                        ${item.quantity > 1 ? `
+                        <button onclick="deleteItem(${item.id}, ${item.quantity})" class="action-button danger" style="margin-top: 5px;">
+                            <i class="fas fa-trash-alt"></i> Remover Tudo
+                        </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Delete item
+        function deleteItem(id, quantityToRemove) {
+            const password = prompt("Para remover itens, digite a senha:");
+            if (password !== "0301957") {
+                alert("Senha incorreta! Operação cancelada.");
+                return;
+            }
+
+            const item = inventoryData.find(item => item.id === id);
+            if (!item) {
+                alert("Item não encontrado!");
+                return;
+            }
+
+            quantityToRemove = parseInt(quantityToRemove) || item.quantity;
+            
+            if (quantityToRemove <= 0) {
+                alert("Quantidade inválida!");
+                return;
+            }
+
+            if (quantityToRemove > item.quantity) {
+                alert(`Não é possível remover ${quantityToRemove} unidades. Estoque atual: ${item.quantity}`);
+                return;
+            }
+
+            const confirmMessage = quantityToRemove === item.quantity
+                ? `Tem certeza que deseja remover TODAS as ${item.quantity} unidades do item ${id}?`
+                : `Tem certeza que deseja remover ${quantityToRemove} unidades do item ${id}? (Restarão ${item.quantity - quantityToRemove})`;
+
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            const index = inventoryData.findIndex(item => item.id === id);
+            if (index !== -1) {
+                if (quantityToRemove === item.quantity) {
+                    // Remove o item completamente
+                    const deletedItem = inventoryData.splice(index, 1)[0];
+                    logMovement(deletedItem, "Remoção", {
+                        fromObra: deletedItem.obra,
+                        location: deletedItem.location
+                    });
+                } else {
+                    // Apenas reduz a quantidade
+                    inventoryData[index].quantity -= quantityToRemove;
+                    logMovement({...item, quantity: quantityToRemove}, "Remoção Parcial", {
+                        fromObra: item.obra,
+                        location: item.location,
+                        remaining: inventoryData[index].quantity
+                    });
+                }
+
+                loadInventoryItems(inventoryData);
+                loadAdminInventoryList(document.getElementById("admin-search-item")?.value || "");
+                updateStats();
+            }
+        }
+
+        // Generate OT number
+        function generateOTNumber() {
+            const now = new Date();
+            const year = now.getFullYear();
+            lastOTNumber++;
+            return `OT-${lastOTNumber.toString().padStart(4, '0')}/${year}`;
+        }
+
+        // Transfer item between obras
+        function transferItem(itemId, fromObra, toObra, generateOT = false, responsavelEnvio = "", responsavelRecebimento = "") {
+            const itemIndex = inventoryData.findIndex(item => item.id === itemId && item.obra === fromObra);
+            
+            if (itemIndex === -1) {
+                alert("Item não encontrado na obra de origem!");
+                return false;
+            }
+            
+            const item = inventoryData[itemIndex];
+            const otNumber = generateOT ? generateOTNumber() : null;
+            
+            // Verifica se existe o item na obra destino
+            const itemDestinoIndex = inventoryData.findIndex(i => 
+                i.id === itemId && i.obra === toObra && i.location === item.location
+            );
+            
+            if (itemDestinoIndex !== -1) {
+                // Item já existe na obra destino - aumentar quantidade
+                inventoryData[itemDestinoIndex].quantity += item.quantity;
+            } else {
+                // Cria um novo registro na obra destino
+                const novoItem = {...item};
+                novoItem.obra = toObra;
+                inventoryData.push(novoItem);
+            }
+            
+            // Remove o item da obra origem
+            inventoryData.splice(itemIndex, 1);
+            
+            // Registra no histórico
+            logMovement(item, "Transferência", {
+                fromObra,
+                toObra,
+                location: item.location,
+                otNumber
+            });
+
+            // Se for para gerar OT, registra no histórico de OTs
+            if (generateOT && otNumber) {
+                const otData = {
+                    id: otNumber,
+                    date: new Date().toLocaleString(),
+                    from: fromObra,
+                    to: toObra,
+                    sender: responsavelEnvio,
+                    receiver: responsavelRecebimento,
+                    items: `${itemId}:${item.quantity}`,
+                    action: "OT"
+                };
+                otHistory.unshift(otData);
+                saveOTHistory();
+                generateOTPDF(otData);
+            }
+            
+            // Atualiza a exibição
+            loadInventoryItems(inventoryData);
+            updateStats();
+            return true;
+        }
+
+        // Process material receipt
+        function processMaterialReceipt(otNumber, fromObra, sender, itemsList, notes) {
+            // Validar que é para a obra 030
+            if (document.getElementById("obra-select").value !== "030") {
+                alert("Esta função é exclusiva para a CENTRAL DE EQUIPAMENTOS (030)");
+                return false;
+            }
+
+            const items = itemsList.split(',').map(item => {
+                const [id, qty] = item.trim().split(':');
+                return { id: parseInt(id), quantity: parseInt(qty) };
+            });
+
+            // Verificar se todos os itens existem na obra remetente
+            const invalidItems = items.filter(item => 
+                !inventoryData.some(i => i.id === item.id && i.obra === fromObra)
+            );
+
+            if (invalidItems.length > 0) {
+                alert(`Itens não encontrados na obra remetente: ${invalidItems.map(i => i.id).join(', ')}`);
+                return false;
+            }
+
+            // Processar cada item
+            items.forEach(item => {
+                // Transferir da obra remetente para 030
+                transferItem(item.id, fromObra, "030", false);
+                
+                // Registrar no histórico
+                logMovement({
+                    id: item.id,
+                    name: inventoryData.find(i => i.id === item.id && i.obra === "030")?.name || "",
+                    quantity: item.quantity,
+                    obra: "030",
+                    location: inventoryData.find(i => i.id === item.id && i.obra === "030")?.location || ""
+                }, "Recebimento", {
+                    fromObra,
+                    toObra: "030",
+                    otNumber,
+                    notes
+                });
+            });
+
+            // Registrar a OT de recebimento
+            otHistory.unshift({
+                id: otNumber,
+                date: new Date().toLocaleString(),
+                from: fromObra,
+                to: "030",
+                sender: sender,
+                receiver: "CENTRAL DE EQUIPAMENTOS",
+                items: itemsList,
+                notes: notes,
+                action: "RECEBIMENTO"
+            });
+            
+            saveOTHistory();
+            updateOTHistoryDisplay();
+            
+            alert(`Recebimento de ${items.length} itens registrado com sucesso!\nOT: ${otNumber}`);
+            return true;
+        }
+
+        // Generate OT PDF (simulated)
+        function generateOTPDF(otData) {
+            const pdfContent = `
+                ORDEM DE TRANSFERÊNCIA: ${otData.id}
+                Data: ${otData.date}
+                
+                DE: ${obras[otData.from] || otData.from}
+                PARA: ${obras[otData.to] || otData.to}
+                
+                RESPONSÁVEL ENVIO: ${responsaveis[otData.sender] || otData.sender}
+                RESPONSÁVEL RECEBIMENTO: ${responsaveis[otData.receiver] || otData.receiver}
+                
+                ITENS TRANSFERIDOS:
+                - Código: ${otData.items.split(':')[0]}
+                - Quantidade: ${otData.items.split(':')[1]}
+                
+                ASSINATURA ENVIO: _________________________
+                ASSINATURA RECEBIMENTO: ___________________
+                
+                OBSERVAÇÕES:
+            `;
+            
+            // Simulando download do PDF
+            const blob = new Blob([pdfContent], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `OT_${otData.id.replace('/', '_')}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            alert(`OT ${otData.id} gerada com sucesso!\n\nItens: ${otData.items}\nDe: ${otData.from}\nPara: ${otData.to}`);
+        }
+
+        // Mass transfer items
+        function massTransferItems(fromObra, toObra, itemsList, responsavelEnvio, responsavelRecebimento) {
+            const otNumber = generateOTNumber();
+            const transferDate = new Date().toLocaleString();
+            const items = itemsList.split(',').map(item => {
+                const [id, qty] = item.trim().split(':');
+                return { id: parseInt(id), quantity: parseInt(qty) };
+            });
+
+            // Validar itens
+            const invalidItems = items.filter(item => 
+                !inventoryData.some(i => i.id === item.id && i.obra === fromObra)
+            );
+
+            if (invalidItems.length > 0) {
+                alert(`Itens inválidos: ${invalidItems.map(i => i.id).join(', ')}`);
+                return;
+            }
+
+            // Processar transferência
+            items.forEach(item => {
+                transferItem(item.id, fromObra, toObra, false);
+            });
+
+            // Registrar OT no histórico
+            otHistory.unshift({
+                id: otNumber,
+                date: transferDate,
+                from: fromObra,
+                to: toObra,
+                sender: responsavelEnvio,
+                receiver: responsavelRecebimento,
+                items: itemsList,
+                action: "OT"
+            });
+
+            saveOTHistory();
+            updateOTHistoryDisplay();
+            
+            // Gerar PDF (simulado)
+            generateOTPDF({
+                id: otNumber,
+                date: transferDate,
+                from: fromObra,
+                to: toObra,
+                sender: responsavelEnvio,
+                receiver: responsavelRecebimento,
+                items: itemsList
+            });
+            
+            logActivity(`OT ${otNumber} gerada para transferência de ${items.length} itens`);
+        }
+
+        // Change all locations prefix
+        function changeAllLocations(currentPrefix, newPrefix) {
+            if (currentPrefix === newPrefix) {
+                alert("O prefixo novo deve ser diferente do atual!");
+                return;
+            }
+
+            if (!confirm(`ATENÇÃO! Isso alterará TODAS as localizações de ${currentPrefix}1-${currentPrefix}30 para ${newPrefix}1-${newPrefix}30. Deseja continuar?`)) {
+                return;
+            }
+
+            let changedItems = 0;
+            
+            inventoryData.forEach(item => {
+                if (item.location.startsWith(currentPrefix)) {
+                    const number = item.location.substring(1);
+                    const oldLocation = item.location;
+                    item.location = newPrefix + number;
+                    changedItems++;
+                    
+                    logMovement(item, "Alteração de Localização", {
+                        fromObra: item.obra,
+                        from: oldLocation,
+                        to: item.location
+                    });
+                }
+            });
+
+            alert(`Foram alteradas ${changedItems} localizações de ${currentPrefix} para ${newPrefix}`);
+            loadInventoryItems(inventoryData);
+            loadAdminInventoryList();
+        }
+
+        // Clear entire inventory
+        function clearEntireInventory() {
+            const password = prompt("Esta ação é IRREVERSÍVEL! Para continuar, digite a senha:");
+            
+            if (password !== "010301957") {
+                alert("Senha incorreta! Ação cancelada.");
+                return;
+            }
+
+            if (!confirm("ATENÇÃO! Isso irá REMOVER TODOS OS ITENS do estoque permanentemente. Tem certeza absoluta?")) {
+                return;
+            }
+
+            const itemCount = inventoryData.length;
+            inventoryData.length = 0; // Limpa o array
+            
+            logActivity(`Limpou TODO o estoque (${itemCount} itens removidos)`);
+            loadInventoryItems(inventoryData);
+            updateStats();
+            alert("Todo o estoque foi limpo com sucesso.");
+        }
+
+        // Save OT history
+        function saveOTHistory() {
+            localStorage.setItem('otHistory', JSON.stringify(otHistory));
+        }
+
+        // Load OT history
+        function loadOTHistory() {
+            const saved = localStorage.getItem('otHistory');
+            if (saved) otHistory = JSON.parse(saved);
+        }
+
+        // Update OT history display
+        function updateOTHistoryDisplay(filter = '') {
+            const historyList = document.getElementById('ot-history-list');
+            const filtered = otHistory.filter(ot => 
+                ot.date.includes(document.getElementById('ot-date-filter').value || '') &&
+                (responsaveis[ot.sender]?.toLowerCase().includes(filter.toLowerCase()) ||
+                 responsaveis[ot.receiver]?.toLowerCase().includes(filter.toLowerCase()) ||
+                 ot.id.toLowerCase().includes(filter.toLowerCase()))
+            );
+
+            historyList.innerHTML = filtered.map(ot => `
+                <div class="ot-record">
+                    <div class="ot-header">
+                        <span class="ot-id">${ot.id}</span>
+                        <span class="ot-date">${new Date(ot.date).toLocaleDateString()}</span>
+                    </div>
+                    <div class="ot-details">
+                        <div><i class="fas fa-truck"></i> De: ${obras[ot.from] || ot.from}</div>
+                        <div><i class="fas fa-map-marker-alt"></i> Para: ${obras[ot.to] || ot.to}</div>
+                        <div><i class="fas fa-user"></i> Enviado por: ${responsaveis[ot.sender] || ot.sender}</div>
+                        <div><i class="fas fa-user-check"></i> Recebido por: ${responsaveis[ot.receiver] || ot.receiver}</div>
+                        <div><i class="fas fa-boxes"></i> Itens: ${ot.items}</div>
+                        ${ot.notes ? `<div><i class="fas fa-sticky-note"></i> Observações: ${ot.notes}</div>` : ''}
+                    </div>
+                    <div class="ot-actions">
+                        <button onclick="downloadOT('${ot.id}')" class="action-button small">
+                            <i class="fas fa-download"></i> Baixar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Export OT history to Excel
+        function exportOTHistoryToExcel() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "N° OT;Data;Origem;Destino;Enviado por;Recebido por;Itens Transferidos;Observações\n";
+            
+            otHistory.forEach(ot => {
+                const row = [
+                    ot.id,
+                    ot.date,
+                    obras[ot.from] || ot.from,
+                    obras[ot.to] || ot.to,
+                    responsaveis[ot.sender] || ot.sender,
+                    responsaveis[ot.receiver] || ot.receiver,
+                    ot.items.replace(/,/g, "; "),
+                    ot.notes || ''
+                ].join(";");
+                csvContent += row + "\n";
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `historico_OTs_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Autocomplete for responsibles
+        function setupAutocomplete(inputId, suggestionsId, hiddenInputId) {
+            const input = document.getElementById(inputId);
+            const hiddenInput = document.getElementById(hiddenInputId);
+            const suggestionsContainer = document.getElementById(suggestionsId);
+
+            input.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                suggestionsContainer.innerHTML = '';
+                
+                if (searchTerm.length < 2) return;
+
+                const matches = Object.entries(responsaveis)
+                    .filter(([email, nome]) => 
+                        nome.toLowerCase().includes(searchTerm) || 
+                        email.toLowerCase().includes(searchTerm)
+                    )
+                    .slice(0, 5);
+
+                matches.forEach(([email, nome]) => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `<strong>${nome}</strong> <small>${email}@cimcop.com.br</small>`;
+                    div.addEventListener('click', function() {
+                        input.value = nome;
+                        hiddenInput.value = email;
+                        suggestionsContainer.innerHTML = '';
+                    });
+                    suggestionsContainer.appendChild(div);
+                });
+            });
+        }
+
+        // Admin panel functionality
+        function setupAdminPanel() {
+            const adminButton = document.getElementById("admin-button");
+            const adminModal = document.getElementById("admin-modal");
+            const closeModal = adminModal.querySelector(".close-modal");
+            const loginButton = document.getElementById("login-button");
+            const adminPassword = document.getElementById("admin-password");
+            const loginError = document.getElementById("login-error");
+            const adminLogin = document.getElementById("admin-login");
+            const adminPanel = document.getElementById("admin-panel");
+            
+            // Admin password
+            const correctPassword = "0301957";
+            
+            // Open admin modal
+            adminButton.addEventListener("click", () => {
+                adminModal.style.display = "block";
+                adminPassword.value = "";
+                loginError.style.display = "none";
+            });
+            
+            // Close modal
+            closeModal.addEventListener("click", () => {
+                adminModal.style.display = "none";
+            });
+            
+            // Close when clicking outside
+            window.addEventListener("click", (event) => {
+                if (event.target == adminModal) {
+                    adminModal.style.display = "none";
+                }
+            });
+            
+            // Login button
+loginButton.addEventListener("click", () => {
+    if (adminPassword.value === correctPassword) {
+        adminLogin.style.display = "none";
+        adminPanel.style.display = "block";
+        loadAdminInventoryList();
+        updateActivityLog();
+        loadOTHistory();
+        updateOTHistoryDisplay();
+        logActivity("Acessou o painel administrativo");
+    } else {
+        loginError.style.display = "block";
     }
-}
-
-// Initialize everything when the page loads
-document.addEventListener("DOMContentLoaded", () => {
-    loadInventoryItems(inventoryData);
-    updateStats();
-    setupSearch();
-    setupFilters();
-    
-    document.getElementById("export-button").addEventListener("click", exportToCSV);
 });
-    </script>
-</body>
-</html>
+
+// Enter key for password
+adminPassword.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") {
+        loginButton.click();
+    }
+});
+
+// Back to login button
+document.getElementById("back-to-login").addEventListener("click", function () {
+    adminPanel.style.display = "none";
+    adminLogin.style.display = "block";
+});
+
+                            
+                            // Tab switching
+                            const tabButtons = document.querySelectorAll(".tab-button");
+                            tabButtons.forEach(button => {
+                                button.addEventListener("click", () => {
+                                    // Remove active class from all tabs
+                                    tabButtons.forEach(btn => btn.classList.remove("active"));
+                                    
+                                    // Add active class to clicked tab
+                                    button.classList.add("active");
+                                    
+                                    // Hide all content
+                                    document.querySelectorAll(".admin-panel-content").forEach(content => {
+                                        content.style.display = "none";
+                                    });
+                                    
+                                    // Show selected content
+                                    const tabId = button.getAttribute("data-tab");
+                                    document.getElementById(tabId).style.display = "block";
+                                });
+                            });
+                            
+                            // Add item form
+                            const addItemForm = document.getElementById("add-item-form");
+                            addItemForm.addEventListener("submit", (event) => {
+                                event.preventDefault();
+                                
+                                const newId = parseInt(document.getElementById("new-item-id").value);
+                                const categoria = getCategoria(newId);
+                                const quantity = parseInt(document.getElementById("new-item-quantity").value || 1);
+                                
+                                // Validação específica por categoria
+                                for (const campo of categoria.requer) {
+                                    if (campo === "CA" && !document.getElementById("new-item-epi").value) {
+                                        alert(`Itens da categoria ${categoria.nome} devem ter CA de EPI informado!`);
+                                        return;
+                                    }
+                                }
+                                
+                                const newItem = {
+                                    id: newId,
+                                    name: document.getElementById("new-item-name").value,
+                                    location: document.getElementById("new-item-location").value,
+                                    obra: document.getElementById("obra-select").value,
+                                    description: document.getElementById("new-item-description").value,
+                                    quantity: quantity
+                                };
+                                
+                                // Adiciona campos condicionais
+                                if (newId >= 1100000 && newId <= 2000000) {
+                                    newItem.equivalence = document.getElementById("new-item-equivalence").value;
+                                    newItem.application = document.getElementById("new-item-application").value;
+                                }
+                                
+                                if (newId >= 4200000) {
+                                    newItem.epiCA = document.getElementById("new-item-epi").value;
+                                }
+                                
+                                // Check if ID already exists in same location and obra
+                                const existingItemIndex = inventoryData.findIndex(item => 
+                                    item.id === newItem.id && 
+                                    item.obra === newItem.obra &&
+                                    item.location === newItem.location
+                                );
+                                
+                                if (existingItemIndex !== -1) {
+                                    // Item exists - increase quantity
+                                    inventoryData[existingItemIndex].quantity += newItem.quantity;
+                                    alert(`Quantidade do item ${newItem.id} aumentada em ${newItem.quantity} unidades. Total: ${inventoryData[existingItemIndex].quantity}`);
+                                } else {
+                                    // Add new item
+                                    inventoryData.push(newItem);
+                                    alert(`${newItem.quantity} unidades do item ${newItem.id} adicionadas com sucesso!`);
+                                }
+                                
+                                // Log activity
+                                logMovement(newItem, "Adição", {
+                                    fromObra: newItem.obra,
+                                    location: newItem.location
+                                });
+                                
+                                // Update displays
+                                loadInventoryItems(inventoryData);
+                                loadAdminInventoryList();
+                                updateStats();
+                                
+                                // Reset form
+                                addItemForm.reset();
+                                document.getElementById("categoria-display").textContent = "N/A";
+                            });
+                            
+                            // Transfer form
+                            document.getElementById("transfer-form").addEventListener("submit", function(e) {
+                                e.preventDefault();
+                                
+                                const itemId = parseInt(document.getElementById("transfer-item-code").value);
+                                const fromObra = document.getElementById("transfer-from-obra").value;
+                                const toObra = document.getElementById("transfer-to-obra").value;
+                                const location = document.getElementById("transfer-location").value;
+                                const responsavelEnvio = document.getElementById("responsavel-envio").value;
+                                const responsavelRecebimento = document.getElementById("responsavel-recebimento").value;
+                                
+                                if (fromObra === toObra) {
+                                    alert("A obra de origem e destino devem ser diferentes!");
+                                    return;
+                                }
+                                
+                                if (!responsavelEnvio || !responsavelRecebimento) {
+                                    alert("Selecione os responsáveis pelo envio e recebimento!");
+                                    return;
+                                }
+                                
+                                if (transferItem(itemId, fromObra, toObra, true, responsavelEnvio, responsavelRecebimento)) {
+                                    alert("Item transferido e OT gerada com sucesso!");
+                                    this.reset();
+                                } else {
+                                    alert("Item não encontrado!");
+                                }
+                            });
+                            
+                            // Receipt form
+                            document.getElementById("receipt-form").addEventListener("submit", function(e) {
+                                e.preventDefault();
+                                
+                                const otNumber = document.getElementById("receipt-ot-number").value;
+                                const fromObra = document.getElementById("receipt-from-obra").value;
+                                const sender = document.getElementById("receipt-sender").value;
+                                const itemsList = document.getElementById("receipt-items").value;
+                                const notes = document.getElementById("receipt-notes").value;
+                                
+                                if (!otNumber || !fromObra || !sender || !itemsList) {
+                                    alert("Preencha todos os campos obrigatórios!");
+                                    return;
+                                }
+                                
+                                if (processMaterialReceipt(otNumber, fromObra, sender, itemsList, notes)) {
+                                    this.reset();
+                                }
+                            });
+                            
+                            // Mass transfer form
+                            document.getElementById("confirm-mass-transfer").addEventListener("click", function() {
+                                const fromObra = "030"; // Sempre da central
+                                const toObra = document.getElementById("transfer-to-obra").value;
+                                const itemsList = document.getElementById("mass-transfer-items").value;
+                                const responsavelEnvio = document.getElementById("mass-sender").value;
+                                const responsavelRecebimento = document.getElementById("mass-receiver").value;
+                                
+                                if (!responsavelEnvio || !responsavelRecebimento) {
+                                    alert("Selecione os responsáveis pelo envio e recebimento!");
+                                    return;
+                                }
+                                
+                                if (responsavelEnvio === responsavelRecebimento) {
+                                    alert("O responsável pelo envio não pode ser o mesmo do recebimento!");
+                                    return;
+                                }
+                                
+                                massTransferItems(fromObra, toObra, itemsList, responsavelEnvio, responsavelRecebimento);
+                            });
+                            
+                            // Change locations button
+                            document.getElementById("change-locations").addEventListener("click", function() {
+                                const currentPrefix = document.getElementById("current-prefix").value;
+                                const newPrefix = document.getElementById("new-prefix").value;
+                                changeAllLocations(currentPrefix, newPrefix);
+                            });
+                            
+                            // Clear inventory button
+                            document.getElementById("clear-inventory").addEventListener("click", clearEntireInventory);
+                            
+                            // Export log button
+                            document.getElementById("export-log-button").addEventListener("click", exportActivityLog);
+                            
+                            // Export OT history button
+                            document.getElementById("export-ot-history").addEventListener("click", exportOTHistoryToExcel);
+                            
+                            // Setup autocomplete for responsibles
+                            setupAutocomplete('responsavel-envio-input', 'envio-suggestions', 'responsavel-envio');
+                            setupAutocomplete('responsavel-recebimento-input', 'recebimento-suggestions', 'responsavel-recebimento');
+                            setupAutocomplete('receipt-sender-input', 'receipt-sender-suggestions', 'receipt-sender');
+                            setupAutocomplete('mass-sender-input', 'mass-sender-suggestions', 'mass-sender');
+                            setupAutocomplete('mass-receiver-input', 'mass-receiver-suggestions', 'mass-receiver');
+                            
+                            // Auto-fill transfer form when item code is entered
+                            document.getElementById("transfer-item-code").addEventListener("input", function() {
+                                const itemId = parseInt(this.value);
+                                if (!itemId) return;
+                                
+                                const item = inventoryData.find(item => item.id === itemId);
+                                if (item) {
+                                    document.getElementById("transfer-from-obra").value = item.obra;
+                                    document.getElementById("transfer-location").value = item.location;
+                                }
+                            });
+                            
+                            // Show/hide fields based on item code
+                            document.getElementById("new-item-id").addEventListener("input", function() {
+                                const itemId = parseInt(this.value) || 0;
+                                const categoria = getCategoria(itemId);
+                                
+                                // Atualiza a exibição da categoria
+                                document.getElementById("categoria-display").textContent = categoria.nome;
+                                
+                                // Mostra/oculta campos conforme necessário
+                                document.getElementById("epi-field-container").style.display = 
+                                    categoria.requer.includes("CA") ? "block" : "none";
+                                
+                                const equivAppFields = document.querySelectorAll("[id^='new-item-equivalence'], [id^='new-item-application']");
+                                equivAppFields.forEach(field => {
+                                    field.closest("div").style.display = 
+                                        (itemId >= 1100000 && itemId <= 2000000) ? "block" : "none";
+                                });
+                            });
+                            
+                            // OT history filters
+                            document.getElementById("ot-date-filter").addEventListener("change", () => updateOTHistoryDisplay());
+                            document.getElementById("ot-search").addEventListener("input", (e) => updateOTHistoryDisplay(e.target.value));
+                        }
+
+                        // Mobile navigation
+                        function setupMobileNav() {
+                            const menuBtn = document.getElementById('mobile-menu-btn');
+                            const mobileMenu = document.querySelector('.mobile-menu');
+                            
+                            menuBtn.addEventListener('click', () => {
+                                mobileMenu.style.display = mobileMenu.style.display === 'block' ? 'none' : 'block';
+                            });
+                            
+                            document.getElementById('mobile-search-btn').addEventListener('click', () => {
+                                document.getElementById('search-input').focus();
+                                mobileMenu.style.display = 'none';
+                            });
+                            
+                            document.getElementById('mobile-admin-btn').addEventListener('click', () => {
+                                document.getElementById('admin-button').click();
+                                mobileMenu.style.display = 'none';
+                            });
+                            
+                            document.getElementById('mobile-export-btn').addEventListener('click', () => {
+                                exportToExcel();
+                                mobileMenu.style.display = 'none';
+                            });
+                        }
+
+                        // Toggle view between compact and expanded
+                        function toggleView() {
+                            const container = document.getElementById('division-container');
+                            container.classList.toggle('compact-view');
+                            
+                            const button = document.getElementById('toggle-view-button');
+                            if (container.classList.contains('compact-view')) {
+                                button.innerHTML = '<i class="fas fa-expand"></i> Visualização Expandida';
+                            } else {
+                                button.innerHTML = '<i class="fas fa-list"></i> Visualização Compacta';
+                            }
+                        }
+
+                        // Add item to recently viewed history
+                        function addToHistory(item) {
+                            // Check if item is already in history
+                            const existingIndex = itemsVistos.findIndex(i => i.id === item.id);
+                            if (existingIndex !== -1) {
+                                itemsVistos.splice(existingIndex, 1);
+                            }
+                            
+                            // Add to beginning of array
+                            itemsVistos.unshift(item);
+                            
+                            // Keep only last MAX_HISTORICO items
+                            if (itemsVistos.length > MAX_HISTORICO) {
+                                itemsVistos.pop();
+                            }
+                            
+                            updateHistoryDisplay();
+                        }
+
+                        // Update recently viewed items display
+                        function updateHistoryDisplay() {
+                            const container = document.getElementById('historico-items');
+                            const section = document.getElementById('historico-section');
+                            
+                            if (itemsVistos.length === 0) {
+                                section.style.display = 'none';
+                                return;
+                            }
+                            
+                            section.style.display = 'block';
+                            container.innerHTML = itemsVistos.map(item => `
+                                <div class="historico-item" onclick="showItemDetails(${item.id})">
+                                    <span class="historico-codigo">${item.id}</span>
+                                    <span class="historico-nome">${item.name}</span>
+                                    <span class="historico-local">${item.location}</span>
+                                </div>
+                            `).join('');
+                        }
+
+                        // Initialize the application
+                        document.addEventListener('DOMContentLoaded', function() {
+                            try {
+                                loadInventoryItems(inventoryData);
+                                setupSearch();
+                                setupAdminPanel();
+                                setupMobileNav();
+                                
+                                // Event listeners para exportação
+                                document.getElementById("print-button").addEventListener("click", printInventory);
+                                document.getElementById("export-excel-button").addEventListener("click", exportToExcel);
+                                document.getElementById("toggle-view-button").addEventListener("click", toggleView);
+                                
+                                // Show recently viewed section if there are items
+                                if (itemsVistos.length > 0) {
+                                    updateHistoryDisplay();
+                                }
+                                
+                                logActivity("Sistema iniciado");
+                            } catch (error) {
+                                console.error("Erro na inicialização:", error);
+                                alert("Ocorreu um erro ao carregar o sistema. Por favor, recarregue a página.");
+                            }
+                        });
+                    </script>
+                </body>
+                </html>
